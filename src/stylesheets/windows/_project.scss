@@ -84,3 +84,9 @@
   "../partials/flex",
   "../partials/orientation",
   "../partials/draggable";
+
+@import "leaflet/dist/leaflet";
+
+.leaflet-container {
+  height: 300px;
+}
