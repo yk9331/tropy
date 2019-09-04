@@ -54,8 +54,16 @@
   .project-mode-leave-active & {
     transform: translate3d(-25%, 0, 0);
 
+    @media (min-width: $bp-xl) {
+      transform: none;
+    }
+
     &::after {
       opacity: 1;
+
+      @media (min-width: $bp-xl) {
+        opacity: 0;
+      }
     }
   }
 

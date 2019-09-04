@@ -235,9 +235,14 @@ const LIST = {
   PADDING: 16
 }
 
+const BREAKPOINT = {
+  XL: 1920
+}
+
 module.exports =  {
   ACTIVITY,
   BODY,
+  BREAKPOINT,
   COLUMN,
   EDITOR,
   ESPER,

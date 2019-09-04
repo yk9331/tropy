@@ -53,6 +53,12 @@ $space-xxl: 48px;
 $shim: 1px;
 
 
+// Breakpoints
+// --------------------------------------------------
+
+$bp-xl: const("BREAKPOINT.XL") * 1px;
+
+
 // Thumbnails
 // --------------------------------------------------
 
@@ -340,6 +346,7 @@ $print-font-size: 7pt;
 $print-font-size-large: 12pt;
 $print-line-height: 1.5;
 $print-line-height-large: 2;
+
 
 // Debug
 // --------------------------------------------------

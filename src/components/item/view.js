@@ -40,7 +40,7 @@ class ItemView extends React.PureComponent {
 
   get offset() {
     return (this.isItemOpen ^ this.props.isModeChanging) ?
-      0 : `calc(100% - ${this.props.offset}px)`
+      0 : `960px`
   }
 
   get style() {
