@@ -33,7 +33,7 @@ class ProjectView extends React.Component {
 
   get style() {
     return {
-      flexBasis: 'calc(100% - 960px)'
+      flexBasis: this.props.width + 'px'
     }
   }
 

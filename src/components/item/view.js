@@ -40,11 +40,15 @@ class ItemView extends React.PureComponent {
 
   get offset() {
     return (this.isItemOpen ^ this.props.isModeChanging) ?
-      0 : '960px'
+      0 : this.props.width + 'px'
   }
 
   get style() {
-    return { transform: `translate3d(${this.offset}, 0, 0)` }
+    return {
+      transform: `translate3d(${this.offset}, 0, 0)`,
+      width: this.props.width + 'px'
+
+    }
   }
 
 

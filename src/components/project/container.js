@@ -9,7 +9,7 @@ const { DropTarget, NativeTypes } = require('../dnd')
 const { NoProject } = require('./none')
 const { extname } = require('path')
 const { MODE } = require('../../constants/project')
-const { emit, on, off, ensure, reflow } = require('../../dom')
+const { bounds, emit, on, off, ensure, reflow, viewport } = require('../../dom')
 const cx = require('classnames')
 const { values } = Object
 const actions = require('../../actions')
@@ -45,13 +45,17 @@ class ProjectContainer extends React.Component {
       mode: props.nav.mode,
       offset: props.ui.panel.width,
       willModeChange: false,
-      isModeChanging: false
+      isModeChanging: false,
+      widthProportion: 0.5,
+      widthProject: viewport().width * this.widthProportion,
+      widthItem: viewport().width * (1 - this.widthProportion)
     }
   }
 
   componentDidMount() {
     on(document, 'keydown', this.handleKeyDown)
     on(document, 'global:back', this.handleBackButton)
+    on(window, 'resize', this.handleResize)
   }
 
   componentDidUpdate({ project, nav, ui }) {
@@ -100,6 +104,14 @@ class ProjectContainer extends React.Component {
       this.props.project.items === 0
   }
 
+  get projectWidth() {
+    return viewport().width * this.state.widthProportion
+  }
+
+  get itemWidth() {
+    return viewport().width * (1 - this.state.widthProportion)
+  }
+
   modeWillChange() {
     if (this.state.willModeChange) return
 
@@ -143,6 +155,18 @@ class ProjectContainer extends React.Component {
     if (this.state.mode !== MODE.PROJECT) {
       this.handleModeChange(MODE.PROJECT)
     }
+  }
+
+  handleResize = () => {
+    console.log(bounds(this.container.current))
+    console.log(viewport().width)
+
+    this.setState({
+      widthProject: viewport().width * this.state.widthProportion,
+      widthItem: viewport().width * (1 - this.state.widthProportion)
+     })
+
+
   }
 
   handleContextMenu = (event) => {
@@ -245,6 +269,7 @@ class ProjectContainer extends React.Component {
         onContextMenu={this.handleContextMenu}>
 
         <ProjectView {...props}
+          width={this.state.widthProject}
           nav={nav}
           items={items}
           data={data}
@@ -258,6 +283,7 @@ class ProjectContainer extends React.Component {
           onMetadataSave={this.handleMetadataSave}/>
 
         <ItemView {...props}
+          width={this.state.widthItem}
           items={selection}
           data={data}
           activeSelection={nav.selection}
