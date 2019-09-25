@@ -104,14 +104,6 @@ class ProjectContainer extends React.Component {
       this.props.project.items === 0
   }
 
-  get projectWidth() {
-    return viewport().width * this.state.widthProportion
-  }
-
-  get itemWidth() {
-    return viewport().width * (1 - this.state.widthProportion)
-  }
-
   modeWillChange() {
     if (this.state.willModeChange) return
 
