@@ -9,6 +9,8 @@ const { DropTarget, NativeTypes } = require('../dnd')
 const { NoProject } = require('./none')
 const { extname } = require('path')
 const { MODE } = require('../../constants/project')
+const { SASS: { BREAKPOINT } } = require('../../constants')
+
 const { bounds, emit, on, off, ensure, reflow, viewport } = require('../../dom')
 const cx = require('classnames')
 const { values } = Object
@@ -150,13 +152,34 @@ class ProjectContainer extends React.Component {
   }
 
   handleResize = () => {
-    console.log(bounds(this.container.current))
-    console.log(viewport().width)
 
-    this.setState({
-      widthProject: viewport().width * this.state.widthProportion,
-      widthItem: viewport().width * (1 - this.state.widthProportion)
-     })
+    console.log('WIDNOW RESIZE')
+
+    let totalWidth = bounds(this.container.current).width
+
+    if (totalWidth > BREAKPOINT.XL) {
+      this.props.onUiUpdate({
+        display: { type: 'giant' }
+      })
+
+      let tandemWidth = totalWidth - this.props.ui.sidebar.width - this.props.ui.panel.width
+      let widthProject = tandemWidth * this.state.widthProportion
+      let widthItem = tandemWidth * (1 - this.state.widthProportion)
+
+
+      console.log(totalWidth, ':', this.props.ui.sidebar.width, widthProject, '|', this.props.ui.panel.width, widthItem)
+      console.log(this.state.widthProportion)
+      this.setState({
+        widthProject,
+        widthItem
+      })
+
+    } else {
+      this.props.onUiUpdate({
+        display: { type: 'standard' }
+      })
+    }
+
 
 
   }
@@ -169,11 +192,39 @@ class ProjectContainer extends React.Component {
     this.props.onModeChange(mode)
   }
 
+  handleSidebarResize = (width) => {
+    console.log('sidebar resize on project cont', width)
+    let totalWidth = bounds(this.container.current).width
+    let widthProject = totalWidth - width - this.state.widthItem - this.props.ui.panel.width
+    let tandemWidth = totalWidth - width - this.props.ui.panel.width
+    let widthProportion = widthProject  / tandemWidth
+
+    this.setState({
+      widthProject: Math.round(widthProject),
+      widthProportion
+    })
+    this.props.onUiUpdate({
+      sidebar: { width: Math.round(width) }
+    })
+
+  }
+
   handlePanelResize = (offset) => {
-    this.setState({ offset })
+    let delta = this.state.offset - offset
+    let totalWidth = bounds(this.container.current).width
+    let tandemWidth = totalWidth - this.props.ui.sidebar.width - offset
+    let widthItem = this.state.widthItem + delta
+    let widthProportion = (tandemWidth - widthItem) / tandemWidth
+
+    this.setState({
+      widthItem,
+      widthProportion,
+      offset
+    })
   }
 
   handlePanelDragStop = () => {
+    console.log('handlePanelDragStop')
     this.props.onUiUpdate({
       panel: { width: Math.round(this.state.offset) }
     })
@@ -272,6 +323,8 @@ class ProjectContainer extends React.Component {
           photos={photos}
           templates={templates}
           zoom={ui.zoom}
+          display={ui.display}
+          onSidebarResize={this.handleSidebarResize}
           onMetadataSave={this.handleMetadataSave}/>
 
         <ItemView {...props}
@@ -285,7 +338,9 @@ class ProjectContainer extends React.Component {
           photos={visiblePhotos}
           panel={ui.panel}
           offset={this.state.offset}
+          offset2={ui.sidebar.width + this.state.widthProject}
           mode={this.state.mode}
+          display={ui.display}
           isModeChanging={this.state.isModeChanging}
           isTrashSelected={!!nav.trash}
           isProjectClosing={project.closing}

@@ -180,6 +180,11 @@ class AppPrefs extends React.PureComponent {
               name="overlayToolbars"
               value={this.props.settings.overlayToolbars}
               onChange={this.props.onSettingsUpdate}/>
+            <Toggle
+              id="prefs.app.ui.option.giantView"
+              name="giantView"
+              value={this.props.settings.giantView}
+              onChange={this.props.onSettingsUpdate}/>
           </FormElement>
           <FormToggleGroup
             id="prefs.app.zoomMode"

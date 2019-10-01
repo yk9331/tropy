@@ -32,9 +32,12 @@ class ProjectView extends React.Component {
   }
 
   get style() {
-    return {
-      flexBasis: this.props.width + 'px'
+    if (this.props.display.type === 'giant') {
+      console.log("porject display GIANT")
+      return { flexBasis: this.props.width + 'px' }
     }
+    console.log("porject display STANDARD")
+    return { flexBasis: `calc(100% - ${this.props.offset}px)` }
   }
 
   handleZoomChange = (zoom) => {
@@ -77,6 +80,7 @@ class ProjectView extends React.Component {
         <div className="main">
           <section className="items" style={this.style}>
             <header>
+              <div>{this.props.width}</div>
               <ProjectToolbar
                 count={items.length}
                 canCreateItems={!nav.trash}
@@ -127,6 +131,8 @@ class ProjectView extends React.Component {
     photos: object.isRequired,
     tags: object.isRequired,
     dt: func.isRequired,
+    display: object.isRequired,
+    width: number.isRequired,
     zoom: number.isRequired,
     onItemCreate: func.isRequired,
     onItemImport: func.isRequired,

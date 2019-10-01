@@ -228,6 +228,10 @@ class ProjectSidebar extends React.PureComponent {
     })
   }
 
+  handleSidebarResize = ({ value }) => {
+    this.props.onSidebarResize(value)
+  }
+
   render() {
     let root = this.props.lists[this.props.root]
 
@@ -238,9 +242,10 @@ class ProjectSidebar extends React.PureComponent {
         min={SIDEBAR.MIN_WIDTH}
         max={SIDEBAR.MAX_WIDTH}
         value={this.props.width}
-        onChange={this.props.onResize}>
+        onResize={this.handleSidebarResize}>
         <Sidebar>
           <Titlebar isOptional/>
+          <div>{this.props.width}</div>
           <SidebarBody onContextMenu={this.handleContextMenu}>
             <section
               tabIndex={this.tabIndex}
@@ -362,7 +367,8 @@ class ProjectSidebar extends React.PureComponent {
     onTagCreate: func.isRequired,
     onTagDelete: func.isRequired,
     onTagSave: func.isRequired,
-    onTagSelect: func.isRequired
+    onTagSelect: func.isRequired,
+    onSidebarResize: func.isRequired
   }
 
   static defaultProps = {
@@ -429,11 +435,12 @@ module.exports = {
         dispatch(actions.edit.cancel())
       },
 
-      onResize(width) {
-        dispatch(actions.ui.update({
-          sidebar: { width: Math.round(width) }
-        }))
-      },
+      // onResize(width) {
+      //   console.log ('sidebar resize', width)
+      //   dispatch(actions.ui.update({
+      //     sidebar: { width: Math.round(width) }
+      //   }))
+      // },
 
       onTagDelete(tag) {
         dispatch(actions.tag.delete(tag.id))

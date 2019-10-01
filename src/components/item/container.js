@@ -48,6 +48,15 @@ class ItemContainer extends React.PureComponent {
       this.props.settings.layout !== LAYOUT.SIDE_BY_SIDE
   }
 
+  get style() {
+    if (this.props.display.type === 'giant') {
+      return {
+        width: `${this.props.width}px`,
+        background: 'pink'
+      }
+    }
+  }
+
   getResizableProps(layout = this.props.settings.layout) {
     return layout === LAYOUT.SIDE_BY_SIDE ?
       { edge: 'right', margin: ESPER.MIN_WIDTH, min: ESPER.MIN_WIDTH } :
@@ -89,6 +98,7 @@ class ItemContainer extends React.PureComponent {
   render() {
     return (
       <div
+        style={this.style}
         className={cx('item-container', this.props.settings.layout)}
         onContextMenu={this.handleContextMenu}>
         <Resizable
@@ -97,6 +107,7 @@ class ItemContainer extends React.PureComponent {
           isRelative
           value={this.size}
           onChange={this.handleEsperResize}>
+          <div>{this.props.width} {this.props.view.type}</div>
           <Esper {...this.props.view}
             cache={this.props.cache}
             mode={this.props.view.mode || this.props.settings.zoomMode}
@@ -139,6 +150,7 @@ class ItemContainer extends React.PureComponent {
       panel: bool.isRequired,
       tool: string.isRequired
     }).isRequired,
+    display: object.isRequired,
     view: object.isRequired,
     isDisabled: bool,
     isOpen: bool,

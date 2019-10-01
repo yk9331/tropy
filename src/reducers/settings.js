@@ -41,6 +41,7 @@ const defaults = {
   },
   invertScroll: true,
   invertZoom: darwin,
+  giantView: false,
   zoomMode: ESPER.MODE.FIT
 }
 

@@ -39,18 +39,41 @@ class ItemView extends React.PureComponent {
   }
 
   get offset() {
-    return (this.isItemOpen ^ this.props.isModeChanging) ?
-      0 : this.props.width + 'px'
-  }
-
-  get style() {
-    return {
-      transform: `translate3d(${this.offset}, 0, 0)`,
-      width: this.props.width + 'px'
-
+    console.log('offfset', this.props.display)
+    if (this.props.display.type === 'giant') {
+      console.log(' item display GIANT')
+      return (this.isItemOpen ^ this.props.isModeChanging) ?
+        0 : this.props.width + 'px'
+    } else {
+      console.log(' item display STANDARD')
+      return (this.isItemOpen ^ this.props.isModeChanging) ?
+        0 : `calc(100% - ${this.props.offset}px)`
     }
   }
 
+  get style() {
+    if (this.props.display.type === 'giant') {
+      let widthItemDuo = this.props.width + this.props.offset2
+      return {
+        transform: `translate3d(${this.props.offset2}px, 0, 0)`,
+        width: widthItemDuo + 'px',
+        background: 'green'
+      }
+    } else {
+      return {
+        transform: `translate3d(${this.offset}, 0, 0)`,
+        background: 'red'
+      }
+    }
+  }
+
+  get edge() {
+    if (this.props.display.type === 'giant') {
+      return 'right'
+    } else {
+      return this.isItemOpen ? 'right' : 'left'
+    }
+  }
 
   setNotePad = (container) => {
     this.notepad = container != null ? container.notepad : null
@@ -172,6 +195,7 @@ class ItemView extends React.PureComponent {
       offset,
       panel,
       photo,
+      display,
       onPanelDragStop,
       isProjectClosing,
       isTrashSelected,
@@ -180,15 +204,17 @@ class ItemView extends React.PureComponent {
 
     const { isItemOpen } = this
 
+    console.log('RENDERING')
     return (
       <section className="item-view" style={this.style}>
         <Resizable
-          edge={isItemOpen ? 'right' : 'left'}
+          edge={this.edge}
           value={offset}
           min={PANEL.MIN_WIDTH}
           max={PANEL.MAX_WIDTH}
           onResize={this.handlePanelResize}
           onDragStop={onPanelDragStop}>
+          <div>{offset}hey</div>
           <ItemPanelGroup {...pick(props, ItemPanelGroup.props)}
             panel={panel}
             photo={photo}
@@ -199,9 +225,11 @@ class ItemView extends React.PureComponent {
             onNoteCreate={this.handleNoteCreate}/>
         </Resizable>
         <ItemContainer
+          width={this.props.width}
           ref={this.setNotePad}
           note={this.state.note}
           photo={photo}
+          display={display}
           isDisabled={isTrashSelected || isProjectClosing}
           isOpen={isItemOpen}
           onContextMenu={this.props.onContextMenu}
@@ -230,6 +258,7 @@ class ItemView extends React.PureComponent {
     keymap: object.isRequired,
     offset: number.isRequired,
     mode: string.isRequired,
+    display: object.isRequired,
     isModeChanging: bool.isRequired,
     isTrashSelected: bool.isRequired,
     isProjectClosing: bool,

@@ -145,6 +145,7 @@ en:
           invertScroll: Invert direction when scrolling in photos
           invertZoom: Invert direction when zooming in photos
           overlayToolbars: Automatically hide and show toolbars
+          giantView: Automatically switch to giant view
       zoomMode:
         label: By default
         option:
