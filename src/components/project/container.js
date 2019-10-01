@@ -157,7 +157,7 @@ class ProjectContainer extends React.Component {
 
     let totalWidth = bounds(this.container.current).width
 
-    if (totalWidth > BREAKPOINT.XL) {
+    if (this.props.isGiantViewEnabled && totalWidth > BREAKPOINT.XL) {
       this.props.onUiUpdate({
         display: { type: 'giant' }
       })
@@ -472,7 +472,8 @@ module.exports = {
       sort: getSortColumn(state),
       templates: state.ontology.template,
       tags: state.tags,
-      ui: state.ui
+      ui: state.ui,
+      isGiantViewEnabled: state.settings.giantView
     }),
 
     dispatch => ({
