@@ -388,6 +388,7 @@ class ProjectContainer extends React.Component {
       mode: oneOf(values(MODE)).isRequired
     }).isRequired,
 
+    isGiantViewEnabled: bool,
     ui: object.isRequired,
     data: object.isRequired,
     columns: object.isRequired,
