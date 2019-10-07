@@ -245,7 +245,6 @@ class ProjectSidebar extends React.PureComponent {
         onResize={this.handleSidebarResize}>
         <Sidebar>
           <Titlebar isOptional/>
-          <div>{this.props.width}</div>
           <SidebarBody onContextMenu={this.handleContextMenu}>
             <section
               tabIndex={this.tabIndex}

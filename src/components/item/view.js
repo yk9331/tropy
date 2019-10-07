@@ -56,13 +56,11 @@ class ItemView extends React.PureComponent {
       let widthItemDuo = this.props.width + this.props.offset2
       return {
         transform: `translate3d(${this.props.offset2}px, 0, 0)`,
-        width: widthItemDuo + 'px',
-        background: 'green'
+        width: widthItemDuo + 'px'
       }
     } else {
       return {
-        transform: `translate3d(${this.offset}, 0, 0)`,
-        background: 'red'
+        transform: `translate3d(${this.offset}, 0, 0)`
       }
     }
   }
@@ -214,7 +212,6 @@ class ItemView extends React.PureComponent {
           max={PANEL.MAX_WIDTH}
           onResize={this.handlePanelResize}
           onDragStop={onPanelDragStop}>
-          <div>{offset}hey</div>
           <ItemPanelGroup {...pick(props, ItemPanelGroup.props)}
             panel={panel}
             photo={photo}

@@ -51,8 +51,7 @@ class ItemContainer extends React.PureComponent {
   get style() {
     if (this.props.display.type === 'giant') {
       return {
-        width: `${this.props.width}px`,
-        background: 'pink'
+        width: `${this.props.width}px`
       }
     }
   }
@@ -107,7 +106,6 @@ class ItemContainer extends React.PureComponent {
           isRelative
           value={this.size}
           onChange={this.handleEsperResize}>
-          <div>{this.props.width} {this.props.view.type}</div>
           <Esper {...this.props.view}
             cache={this.props.cache}
             mode={this.props.view.mode || this.props.settings.zoomMode}

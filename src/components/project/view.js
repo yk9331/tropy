@@ -80,7 +80,6 @@ class ProjectView extends React.Component {
         <div className="main">
           <section className="items" style={this.style}>
             <header>
-              <div>{this.props.width}</div>
               <ProjectToolbar
                 count={items.length}
                 canCreateItems={!nav.trash}

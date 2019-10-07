@@ -152,9 +152,6 @@ class ProjectContainer extends React.Component {
   }
 
   handleResize = () => {
-
-    console.log('WIDNOW RESIZE')
-
     let totalWidth = bounds(this.container.current).width
 
     if (this.props.isGiantViewEnabled && totalWidth > BREAKPOINT.XL) {
@@ -166,9 +163,6 @@ class ProjectContainer extends React.Component {
       let widthProject = tandemWidth * this.state.widthProportion
       let widthItem = tandemWidth * (1 - this.state.widthProportion)
 
-
-      console.log(totalWidth, ':', this.props.ui.sidebar.width, widthProject, '|', this.props.ui.panel.width, widthItem)
-      console.log(this.state.widthProportion)
       this.setState({
         widthProject,
         widthItem
