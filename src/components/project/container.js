@@ -41,6 +41,11 @@ class ProjectContainer extends React.Component {
   constructor(props) {
     super(props)
 
+    let widthProportion = props.ui.display.proportion || 0.5
+    let tandemWidth = viewport().width - this.props.ui.sidebar.width - this.props.ui.panel.width
+    let widthProject = tandemWidth * widthProportion
+    let widthItem = tandemWidth * (1 - widthProportion)
+
     this.state = {
       isProjectClosed: false,
       willProjectClose: false,
@@ -48,9 +53,9 @@ class ProjectContainer extends React.Component {
       offset: props.ui.panel.width,
       willModeChange: false,
       isModeChanging: false,
-      widthProportion: 0.5,
-      widthProject: viewport().width * this.widthProportion,
-      widthItem: viewport().width * (1 - this.widthProportion)
+      widthProportion,
+      widthProject,
+      widthItem
     }
   }
 
@@ -198,7 +203,8 @@ class ProjectContainer extends React.Component {
       widthProportion
     })
     this.props.onUiUpdate({
-      sidebar: { width: Math.round(width) }
+      sidebar: { width: Math.round(width) },
+      display: { proportion: widthProportion },
     })
 
   }
