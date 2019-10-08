@@ -26,6 +26,7 @@ class Layout extends React.Component {
     let item = tandemWidth * (1 - proportion)
 
     this.state = {
+      offset: this.props.ui.panel.width,
       displayType: viewport().width > BREAKPOINT.XL ? 'giant' : 'standard',
       sidebar: this.props.ui.sidebar.width,
       project,
@@ -55,11 +56,6 @@ class Layout extends React.Component {
       width: '300px',
       background: 'pink'
     }
-  }
-
-
-  handleToggle = () => {
-
   }
 
   handleWindowResize = () => {
@@ -103,26 +99,33 @@ class Layout extends React.Component {
 
   }
 
+  handlePanelResize = (offset) => {
+    let delta = this.state.offset - offset
+    let totalWidth = viewport().width
+    let tandemWidth = totalWidth - this.state - offset
+    let item = this.state.item + delta
+    let proportion = (tandemWidth - item) / tandemWidth
+
+    this.setState({
+      item,
+      proportion,
+      offset
+    })
+  }
 
   render() {
-    const {
-      sidebar,
-      project,
-      panel,
-      item,
-      displayType,
-      proportion
-    } = this.state
 
-    console.log('WIDTH', sidebar, project, panel, item)
+    console.log('WIDTH', this.state)
     return (
       <ProjectContainer
-        sidebarW={sidebar}
-        projectW={project}
-        panelW={panel}
-        itemW={item}
-        displayType={displayType}
-        proportion={proportion}
+        sidebarW={this.state.sidebar}
+        projectW={this.state.project}
+        panelW={this.state.panel}
+        itemW={this.state.item}
+        displayType={this.state.displayType}
+        proportion={this.state.proportion}
+        offset={this.state.offset}
+        onPanelResize={this.handlePanelResize}
         onSidebarResize={this.handleSidebarResize}/>
     )
   }

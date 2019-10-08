@@ -10,7 +10,7 @@ const { NoProject } = require('./none')
 const { extname } = require('path')
 const { MODE } = require('../../constants/project')
 
-const { bounds, emit, on, off, ensure, reflow, viewport } = require('../../dom')
+const { emit, on, off, ensure, reflow, viewport } = require('../../dom')
 const cx = require('classnames')
 const { values } = Object
 const actions = require('../../actions')
@@ -49,7 +49,7 @@ class ProjectContainer extends React.Component {
       isProjectClosed: false,
       willProjectClose: false,
       mode: props.nav.mode,
-      offset: props.ui.panel.width,
+      offset: props.offset,
       willModeChange: false,
       isModeChanging: false,
       widthProportion,
@@ -162,27 +162,6 @@ class ProjectContainer extends React.Component {
     this.props.onModeChange(mode)
   }
 
-  handlePanelResize = (offset) => {
-    let delta = this.state.offset - offset
-    let totalWidth = bounds(this.container.current).width
-    let tandemWidth = totalWidth - this.props.ui.sidebar.width - offset
-    let widthItem = this.state.widthItem + delta
-    let widthProportion = (tandemWidth - widthItem) / tandemWidth
-
-    this.setState({
-      widthItem,
-      widthProportion,
-      offset
-    })
-  }
-
-  handlePanelDragStop = () => {
-    console.log('handlePanelDragStop')
-    this.props.onUiUpdate({
-      panel: { width: Math.round(this.state.offset) }
-    })
-  }
-
   handleMetadataSave = (payload, meta = {}) => {
     const { sort, onMetadataSave } = this.props
 
@@ -291,7 +270,7 @@ class ProjectContainer extends React.Component {
           photo={photo}
           photos={visiblePhotos}
           panel={ui.panel}
-          offset={this.state.offset}
+          offset={this.props.offset}
           offset2={ui.sidebar.width + this.props.projectW}
           mode={this.state.mode}
           display={ui.display}
@@ -299,8 +278,7 @@ class ProjectContainer extends React.Component {
           isModeChanging={this.state.isModeChanging}
           isTrashSelected={!!nav.trash}
           isProjectClosing={project.closing}
-          onPanelResize={this.handlePanelResize}
-          onPanelDragStop={this.handlePanelDragStop}
+          onPanelResize={this.props.onPanelResize}
           onMetadataSave={this.handleMetadataSave}/>
 
         <DragLayer
@@ -366,11 +344,13 @@ class ProjectContainer extends React.Component {
     onTemplateImport: func.isRequired,
     onUiUpdate: func.isRequired,
     onSidebarResize: func.isRequired,
+    onPanelResize: func.isRequired,
     sidebarW: number.isRequired,
     projectW: number.isRequired,
     panelW: number.isRequired,
     itemW: number.isRequired,
-    displayType: string.isRequired
+    displayType: string.isRequired,
+    offset: number.isRequired
   }
 }
 
@@ -435,7 +415,7 @@ module.exports = {
       templates: state.ontology.template,
       tags: state.tags,
       ui: state.ui,
-      isGiantViewEnabled: state.settings.giantView
+      isGiantViewEnabled: state.settings.giantView,
     }),
 
     dispatch => ({
