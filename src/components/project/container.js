@@ -162,24 +162,6 @@ class ProjectContainer extends React.Component {
     this.props.onModeChange(mode)
   }
 
-  // handleSidebarResize = (width) => {
-  //   console.log('sidebar resize on project cont', width)
-  //   let totalWidth = bounds(this.container.current).width
-  //   let widthProject = totalWidth - width - this.state.widthItem - this.props.ui.panel.width
-  //   let tandemWidth = totalWidth - width - this.props.ui.panel.width
-  //   let widthProportion = widthProject  / tandemWidth
-  //
-  //   this.setState({
-  //     widthProject: Math.round(widthProject),
-  //     widthProportion
-  //   })
-  //   this.props.onUiUpdate({
-  //     sidebar: { width: Math.round(width) },
-  //     display: { proportion: widthProportion },
-  //   })
-  //
-  // }
-
   handlePanelResize = (offset) => {
     let delta = this.state.offset - offset
     let totalWidth = bounds(this.container.current).width

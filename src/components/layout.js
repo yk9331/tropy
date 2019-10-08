@@ -2,7 +2,7 @@
 
 const React = require('react')
 const { connect } = require('react-redux')
-const { bounds, on, viewport } = require('../dom')
+const { on, viewport } = require('../dom')
 const { ProjectContainer } = require('../components/project/container')
 const { SASS: { BREAKPOINT } } = require('../constants')
 
@@ -10,7 +10,7 @@ const actions = require('../actions')
 
 
 const {
-  object, bool
+  object, bool, func
 } = require('prop-types')
 
 
@@ -86,7 +86,7 @@ class Layout extends React.Component {
 
   handleSidebarResize = (width) => {
     console.log('sidebar resize on project cont', width)
-    let totalWidth = window().width
+    let totalWidth = viewport().width
     let project = totalWidth - width - this.state.item - this.props.ui.panel.width
     let tandemWidth = totalWidth - width - this.props.ui.panel.width
     let proportion = project  / tandemWidth
@@ -114,7 +114,7 @@ class Layout extends React.Component {
       proportion
     } = this.state
 
-    console.log ( "WIDTH", sidebar, project, panel, item)
+    console.log('WIDTH', sidebar, project, panel, item)
     return (
       <ProjectContainer
         sidebarW={sidebar}
@@ -145,7 +145,8 @@ class Layout extends React.Component {
 
   static propTypes = {
     ui: object.isRequired,
-    isGiantViewEnabled: bool
+    isGiantViewEnabled: bool,
+    onUiUpdate: func.isRequired,
   }
 }
 
