@@ -9,7 +9,6 @@ const { DropTarget, NativeTypes } = require('../dnd')
 const { NoProject } = require('./none')
 const { extname } = require('path')
 const { MODE } = require('../../constants/project')
-const { SASS: { BREAKPOINT } } = require('../../constants')
 
 const { bounds, emit, on, off, ensure, reflow, viewport } = require('../../dom')
 const cx = require('classnames')
@@ -62,7 +61,6 @@ class ProjectContainer extends React.Component {
   componentDidMount() {
     on(document, 'keydown', this.handleKeyDown)
     on(document, 'global:back', this.handleBackButton)
-    on(window, 'resize', this.handleResize)
   }
 
   componentDidUpdate({ project, nav, ui }) {
@@ -156,33 +154,6 @@ class ProjectContainer extends React.Component {
     }
   }
 
-  handleResize = () => {
-    let totalWidth = bounds(this.container.current).width
-
-    if (this.props.isGiantViewEnabled && totalWidth > BREAKPOINT.XL) {
-      this.props.onUiUpdate({
-        display: { type: 'giant' }
-      })
-
-      let tandemWidth = totalWidth - this.props.ui.sidebar.width - this.props.ui.panel.width
-      let widthProject = tandemWidth * this.state.widthProportion
-      let widthItem = tandemWidth * (1 - this.state.widthProportion)
-
-      this.setState({
-        widthProject,
-        widthItem
-      })
-
-    } else {
-      this.props.onUiUpdate({
-        display: { type: 'standard' }
-      })
-    }
-
-
-
-  }
-
   handleContextMenu = (event) => {
     this.props.onContextMenu(event)
   }
@@ -191,23 +162,23 @@ class ProjectContainer extends React.Component {
     this.props.onModeChange(mode)
   }
 
-  handleSidebarResize = (width) => {
-    console.log('sidebar resize on project cont', width)
-    let totalWidth = bounds(this.container.current).width
-    let widthProject = totalWidth - width - this.state.widthItem - this.props.ui.panel.width
-    let tandemWidth = totalWidth - width - this.props.ui.panel.width
-    let widthProportion = widthProject  / tandemWidth
-
-    this.setState({
-      widthProject: Math.round(widthProject),
-      widthProportion
-    })
-    this.props.onUiUpdate({
-      sidebar: { width: Math.round(width) },
-      display: { proportion: widthProportion },
-    })
-
-  }
+  // handleSidebarResize = (width) => {
+  //   console.log('sidebar resize on project cont', width)
+  //   let totalWidth = bounds(this.container.current).width
+  //   let widthProject = totalWidth - width - this.state.widthItem - this.props.ui.panel.width
+  //   let tandemWidth = totalWidth - width - this.props.ui.panel.width
+  //   let widthProportion = widthProject  / tandemWidth
+  //
+  //   this.setState({
+  //     widthProject: Math.round(widthProject),
+  //     widthProportion
+  //   })
+  //   this.props.onUiUpdate({
+  //     sidebar: { width: Math.round(width) },
+  //     display: { proportion: widthProportion },
+  //   })
+  //
+  // }
 
   handlePanelResize = (offset) => {
     let delta = this.state.offset - offset
@@ -312,7 +283,7 @@ class ProjectContainer extends React.Component {
         onContextMenu={this.handleContextMenu}>
 
         <ProjectView {...props}
-          width={this.state.widthProject}
+          width={this.props.projectW}
           nav={nav}
           items={items}
           data={data}
@@ -324,11 +295,12 @@ class ProjectContainer extends React.Component {
           templates={templates}
           zoom={ui.zoom}
           display={ui.display}
-          onSidebarResize={this.handleSidebarResize}
+          displayType={this.props.displayType}
+          onSidebarResize={this.props.onSidebarResize}
           onMetadataSave={this.handleMetadataSave}/>
 
         <ItemView {...props}
-          width={this.state.widthItem}
+          width={this.props.itemW}
           items={selection}
           data={data}
           activeSelection={nav.selection}
@@ -338,9 +310,10 @@ class ProjectContainer extends React.Component {
           photos={visiblePhotos}
           panel={ui.panel}
           offset={this.state.offset}
-          offset2={ui.sidebar.width + this.state.widthProject}
+          offset2={ui.sidebar.width + this.props.projectW}
           mode={this.state.mode}
           display={ui.display}
+          displayType={this.props.displayType}
           isModeChanging={this.state.isModeChanging}
           isTrashSelected={!!nav.trash}
           isProjectClosing={project.closing}
@@ -409,7 +382,13 @@ class ProjectContainer extends React.Component {
     onMetadataSave: func.isRequired,
     onSort: func.isRequired,
     onTemplateImport: func.isRequired,
-    onUiUpdate: func.isRequired
+    onUiUpdate: func.isRequired,
+    onSidebarResize: func.isRequired,
+    sidebarW: number.isRequired,
+    projectW: number.isRequired,
+    panelW: number.isRequired,
+    itemW: number.isRequired,
+    displayType: string.isRequired
   }
 }
 

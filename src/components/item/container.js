@@ -49,7 +49,7 @@ class ItemContainer extends React.PureComponent {
   }
 
   get style() {
-    if (this.props.display.type === 'giant') {
+    if (this.props.displayType === 'giant') {
       return {
         width: `${this.props.width}px`
       }
@@ -148,7 +148,7 @@ class ItemContainer extends React.PureComponent {
       panel: bool.isRequired,
       tool: string.isRequired
     }).isRequired,
-    display: object.isRequired,
+    displayType: string.isRequired,
     view: object.isRequired,
     isDisabled: bool,
     isOpen: bool,

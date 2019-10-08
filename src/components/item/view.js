@@ -39,8 +39,7 @@ class ItemView extends React.PureComponent {
   }
 
   get offset() {
-    console.log('offfset', this.props.display)
-    if (this.props.display.type === 'giant') {
+    if (this.props.displayType === 'giant') {
       console.log(' item display GIANT')
       return (this.isItemOpen ^ this.props.isModeChanging) ?
         0 : this.props.width + 'px'
@@ -52,7 +51,7 @@ class ItemView extends React.PureComponent {
   }
 
   get style() {
-    if (this.props.display.type === 'giant') {
+    if (this.props.displayType === 'giant') {
       let widthItemDuo = this.props.width + this.props.offset2
       return {
         transform: `translate3d(${this.props.offset2}px, 0, 0)`,
@@ -66,7 +65,7 @@ class ItemView extends React.PureComponent {
   }
 
   get edge() {
-    if (this.props.display.type === 'giant') {
+    if (this.props.displayType === 'giant') {
       return 'right'
     } else {
       return this.isItemOpen ? 'right' : 'left'
@@ -193,7 +192,7 @@ class ItemView extends React.PureComponent {
       offset,
       panel,
       photo,
-      display,
+      displayType,
       onPanelDragStop,
       isProjectClosing,
       isTrashSelected,
@@ -226,7 +225,7 @@ class ItemView extends React.PureComponent {
           ref={this.setNotePad}
           note={this.state.note}
           photo={photo}
-          display={display}
+          displayType={displayType}
           isDisabled={isTrashSelected || isProjectClosing}
           isOpen={isItemOpen}
           onContextMenu={this.props.onContextMenu}
@@ -255,7 +254,7 @@ class ItemView extends React.PureComponent {
     keymap: object.isRequired,
     offset: number.isRequired,
     mode: string.isRequired,
-    display: object.isRequired,
+    displayType: string.isRequired,
     isModeChanging: bool.isRequired,
     isTrashSelected: bool.isRequired,
     isProjectClosing: bool,

@@ -7,7 +7,7 @@ const { ItemGrid, ItemTable } = require('../item')
 const { ProjectSidebar } = require('./sidebar')
 const { ProjectToolbar } = require('./toolbar')
 const { pick, } = require('../../common/util')
-const { array, bool, func, object, number } = require('prop-types')
+const { array, bool, func, object, number, string } = require('prop-types')
 const { isImageSupported } = require('../../constants/mime')
 const { ITEM } = require('../../constants/sass')
 
@@ -32,11 +32,11 @@ class ProjectView extends React.Component {
   }
 
   get style() {
-    if (this.props.display.type === 'giant') {
-      console.log("porject display GIANT")
+    if (this.props.displayType === 'giant') {
+      console.log("displayType GIANT")
       return { flexBasis: this.props.width + 'px' }
     }
-    console.log("porject display STANDARD")
+    console.log("displayType STANDARD")
     return { flexBasis: `calc(100% - ${this.props.offset}px)` }
   }
 
@@ -130,7 +130,7 @@ class ProjectView extends React.Component {
     photos: object.isRequired,
     tags: object.isRequired,
     dt: func.isRequired,
-    display: object.isRequired,
+    displayType: string.isRequired,
     width: number.isRequired,
     zoom: number.isRequired,
     onItemCreate: func.isRequired,
