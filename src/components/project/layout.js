@@ -2,7 +2,7 @@
 
 const React = require('react')
 const { connect } = require('react-redux')
-const { on, viewport } = require('../../dom')
+const throttle = require('lodash.throttle')
 const { SASS: { BREAKPOINT } } = require('../../constants')
 const { ProjectView } = require('./view')
 const { ItemView } = require('../item')
@@ -11,7 +11,7 @@ const actions = require('../../actions')
 
 
 const {
-  object, bool, func, string, number, array
+  object, bool, func, array
 } = require('prop-types')
 
 
@@ -21,28 +21,28 @@ class ProjectLayout extends React.Component {
   constructor(props) {
     super(props)
 
-    let proportion = props.ui.display.proportion || 0.5
-    let tandemWidth = viewport().width - this.props.ui.sidebar.width - this.props.ui.panel.width
-    let project = tandemWidth * proportion
-    let item = tandemWidth * (1 - proportion)
-
     this.state = {
       offset: this.props.ui.panel.width,
-      displayType: viewport().width > BREAKPOINT.XL ? 'giant' : 'standard',
       sidebar: this.props.ui.sidebar.width,
-      project,
       panel: this.props.ui.panel.width,
-      item,
-      proportion
+      proportion: props.ui.display.proportion || 0.5
     }
   }
 
 
   componentDidMount() {
-    on(window, 'resize', this.handleWindowResize)
+    this.ro = new ResizeObserver(([e]) => {
+      this.handleResize(e.contentRect.width)
+    })
+    this.ro.observe(this.container.current)
   }
 
+
+
   componentWillUnmount() {
+    this.ro.unobserve(this.container.current)
+    this.ro.disconnect()
+    this.ro = null
   }
 
   get classes() {
@@ -60,10 +60,11 @@ class ProjectLayout extends React.Component {
     }
   }
 
-  handleWindowResize = () => {
-    let totalWidth = viewport().width
-    console.log('handleWindowResize')
+  handleResize = throttle((width) => {
+    this.handleResize(width)
+  }, 50)
 
+  handleResize = (totalWidth) => {
     if (this.props.isGiantViewEnabled && totalWidth > BREAKPOINT.XL) {
       let tandemWidth = totalWidth - this.props.ui.sidebar.width - this.props.ui.panel.width
       let project = tandemWidth * this.state.proportion
@@ -71,12 +72,14 @@ class ProjectLayout extends React.Component {
       this.setState({
         displayType: 'giant',
         project,
-        item
+        item,
+        totalWidth
       })
     } else {
       console.log('standard')
       this.setState({
-        displayType: 'standard'
+        displayType: 'standard',
+        totalWidth
       })
     }
 
@@ -84,9 +87,8 @@ class ProjectLayout extends React.Component {
 
   handleSidebarResize = (width) => {
     console.log('sidebar resize on project cont', width)
-    let totalWidth = viewport().width
-    let project = totalWidth - width - this.state.item - this.props.ui.panel.width
-    let tandemWidth = totalWidth - width - this.props.ui.panel.width
+    let project = this.state.totalWidth - width - this.state.item - this.props.ui.panel.width
+    let tandemWidth = this.state.totalWidth  - width - this.props.ui.panel.width
     let proportion = project  / tandemWidth
 
     this.setState({
@@ -103,8 +105,7 @@ class ProjectLayout extends React.Component {
 
   handlePanelResize = (offset) => {
     let delta = this.state.offset - offset
-    let totalWidth = viewport().width
-    let tandemWidth = totalWidth - this.state.sidebar - offset
+    let tandemWidth = this.state.totalWidth  - this.state.sidebar - offset
     let item = this.state.item + delta
     let proportion = (tandemWidth - item) / tandemWidth
 
