@@ -11,7 +11,7 @@ const actions = require('../../actions')
 
 
 const {
-  object, bool, func, array
+  arrayOf, object, bool, func, array, shape, number, string
 } = require('prop-types')
 
 
@@ -187,6 +187,7 @@ class ProjectLayout extends React.Component {
   }
 
   static propTypes = {
+    data: object.isRequired,
     canDrop: bool,
     edit: object.isRequired,
     isActive: bool,
@@ -207,6 +208,21 @@ class ProjectLayout extends React.Component {
 
 
     project: object.isRequired,
+    selection: arrayOf(
+      shape({ id: number.isRequired })
+    ),
+    note: shape({ id: number.isRequired }),
+    notes: arrayOf(
+      shape({ id: number.isRequired })
+    ),
+    photo: object,
+    visiblePhotos: arrayOf(
+      shape({ id: number.isRequired })
+    ),
+    columns: object.isRequired,
+    templates: object.isRequired,
+    isModeChanging: bool.isRequired,
+    mode: string.isRequired,
 
     ui: object.isRequired,
     isGiantViewEnabled: bool,
