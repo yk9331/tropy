@@ -111,7 +111,8 @@ class ProjectLayout extends React.Component {
     this.setState({
       item,
       proportion,
-      offset
+      offset,
+      panel: offset
     })
   }
 
@@ -125,7 +126,7 @@ class ProjectLayout extends React.Component {
 
     return (
       <div style={divStyle}>
-        {this.renderBackup()}
+        {this.renderDebug()}
         <ProjectView {...props}
           width={this.state.project}
           nav={this.props.nav}
@@ -167,24 +168,8 @@ class ProjectLayout extends React.Component {
       </div>
     )
   }
-  renderAAA() {
 
-    console.log('WIDTH', this.state)
-    return (
-      <div
-        sidebarW={this.state.sidebar}
-        projectW={this.state.project}
-        panelW={this.state.panel}
-        itemW={this.state.item}
-        displayType={this.state.displayType}
-        proportion={this.state.proportion}
-        offset={this.state.offset}
-        onPanelResize={this.handlePanelResize}
-        onSidebarResize={this.handleSidebarResize}/>
-    )
-  }
-
-  renderBackup() {
+  renderDebug() {
     return (
       <section ref={this.container}>
         <div
@@ -193,7 +178,8 @@ class ProjectLayout extends React.Component {
           s {this.state.sidebar} |
           P {this.state.project} |
           p {this.state.panel} |
-          I {this.state.item}
+          I {this.state.item}<br/>
+          O {this.state.offset}
         </div>
       </section>
     )
