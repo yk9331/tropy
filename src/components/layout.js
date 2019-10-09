@@ -102,7 +102,7 @@ class Layout extends React.Component {
   handlePanelResize = (offset) => {
     let delta = this.state.offset - offset
     let totalWidth = viewport().width
-    let tandemWidth = totalWidth - this.state - offset
+    let tandemWidth = totalWidth - this.state.sidebar - offset
     let item = this.state.item + delta
     let proportion = (tandemWidth - item) / tandemWidth
 
