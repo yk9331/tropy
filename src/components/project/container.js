@@ -2,15 +2,14 @@
 
 const React = require('react')
 const { connect } = require('react-redux')
-const { ProjectView } = require('./view')
-const { ItemView } = require('../item')
+const { ProjectLayout } = require('./layout')
 const { DragLayer } = require('../drag-layer')
 const { DropTarget, NativeTypes } = require('../dnd')
 const { NoProject } = require('./none')
 const { extname } = require('path')
 const { MODE } = require('../../constants/project')
 
-const { emit, on, off, ensure, reflow, viewport } = require('../../dom')
+const { emit, on, off, ensure, reflow } = require('../../dom')
 const cx = require('classnames')
 const { values } = Object
 const actions = require('../../actions')
@@ -40,21 +39,12 @@ class ProjectContainer extends React.Component {
   constructor(props) {
     super(props)
 
-    let widthProportion = props.ui.display.proportion || 0.5
-    let tandemWidth = viewport().width - this.props.ui.sidebar.width - this.props.ui.panel.width
-    let widthProject = tandemWidth * widthProportion
-    let widthItem = tandemWidth * (1 - widthProportion)
-
     this.state = {
       isProjectClosed: false,
       willProjectClose: false,
       mode: props.nav.mode,
-      offset: props.offset,
       willModeChange: false,
       isModeChanging: false,
-      widthProportion,
-      widthProject,
-      widthItem
     }
   }
 
@@ -63,15 +53,9 @@ class ProjectContainer extends React.Component {
     on(document, 'global:back', this.handleBackButton)
   }
 
-  componentDidUpdate({ project, nav, ui }) {
+  componentDidUpdate({ project, nav }) {
     if (nav.mode !== this.props.nav.mode) {
       this.modeWillChange()
-    }
-
-    if (ui.panel !== this.props.ui.panel) {
-      this.setState({
-        offset: this.props.ui.panel.width
-      })
     }
 
     if (project !== this.props.project) {
@@ -233,7 +217,6 @@ class ProjectContainer extends React.Component {
       visiblePhotos,
       selection,
       templates,
-      ui,
       ...props
     } = this.props
 
@@ -243,42 +226,24 @@ class ProjectContainer extends React.Component {
         ref={this.container}
         onContextMenu={this.handleContextMenu}>
 
-        <ProjectView {...props}
-          width={this.props.projectW}
-          nav={nav}
+        <ProjectLayout {...props}
+          mode={this.state.mode}
+          isModeChanging={this.state.isModeChanging}
           items={items}
-          data={data}
-          isActive={this.state.mode === MODE.PROJECT && !project.closing}
-          isEmpty={this.isEmpty}
-          columns={columns}
-          offset={this.state.offset}
+          nav={nav}
+          photo={photo}
           photos={photos}
-          templates={templates}
-          zoom={ui.zoom}
-          display={ui.display}
-          displayType={this.props.displayType}
-          onSidebarResize={this.props.onSidebarResize}
-          onMetadataSave={this.handleMetadataSave}/>
-
-        <ItemView {...props}
-          width={this.props.itemW}
-          items={selection}
+          columns={columns}
           data={data}
-          activeSelection={nav.selection}
+          templates={templates}
+          dt={dt}
+          project={project}
+          selection={selection}
           note={note}
           notes={notes}
-          photo={photo}
-          photos={visiblePhotos}
-          panel={ui.panel}
-          offset={this.props.offset}
-          offset2={ui.sidebar.width + this.props.projectW}
-          mode={this.state.mode}
-          display={ui.display}
-          displayType={this.props.displayType}
-          isModeChanging={this.state.isModeChanging}
-          isTrashSelected={!!nav.trash}
-          isProjectClosing={project.closing}
-          onPanelResize={this.props.onPanelResize}
+          visiblePhotos={visiblePhotos}
+          isActive={this.state.mode === MODE.PROJECT && !project.closing}
+          isEmpty={this.isEmpty}
           onMetadataSave={this.handleMetadataSave}/>
 
         <DragLayer
@@ -343,14 +308,6 @@ class ProjectContainer extends React.Component {
     onSort: func.isRequired,
     onTemplateImport: func.isRequired,
     onUiUpdate: func.isRequired,
-    onSidebarResize: func.isRequired,
-    onPanelResize: func.isRequired,
-    sidebarW: number.isRequired,
-    projectW: number.isRequired,
-    panelW: number.isRequired,
-    itemW: number.isRequired,
-    displayType: string.isRequired,
-    offset: number.isRequired
   }
 }
 

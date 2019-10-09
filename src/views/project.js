@@ -4,7 +4,6 @@ const React = require('react')
 const { render } = require('react-dom')
 const { Main } = require('../components/main')
 const { ProjectContainer } = require('../components/project/container')
-const { Layout } = require('../components/layout')
 const { create } = require('../stores/project')
 const { main } = require('../sagas/project')
 const { win } = require('../window')
@@ -27,7 +26,7 @@ Promise.all([
 
     render(
       <Main store={store} window={win}>
-        <Layout/>
+        <ProjectContainer/>
       </Main>,
       document.getElementById('main')
     )
