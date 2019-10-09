@@ -361,7 +361,6 @@ class ProjectSidebar extends React.PureComponent {
     onListSave: func.isRequired,
     onProjectEdit: func.isRequired,
     onProjectSave: func.isRequired,
-    onResize: func.isRequired,
     onSelect: func.isRequired,
     onTagCreate: func.isRequired,
     onTagDelete: func.isRequired,
@@ -433,13 +432,6 @@ module.exports = {
         dispatch(actions.project.save(...args))
         dispatch(actions.edit.cancel())
       },
-
-      // onResize(width) {
-      //   console.log ('sidebar resize', width)
-      //   dispatch(actions.ui.update({
-      //     sidebar: { width: Math.round(width) }
-      //   }))
-      // },
 
       onTagDelete(tag) {
         dispatch(actions.tag.delete(tag.id))
