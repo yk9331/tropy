@@ -76,11 +76,6 @@ class ItemView extends React.PureComponent {
     this.notepad = container != null ? container.notepad : null
   }
 
-  handlePanelResize = ({ value }) => {
-    this.props.onPanelResize(value)
-  }
-
-
   handleNoteCreate = () => {
     let delay = 50
 
@@ -208,7 +203,9 @@ class ItemView extends React.PureComponent {
           value={offset}
           min={PANEL.MIN_WIDTH}
           max={PANEL.MAX_WIDTH}
-          onResize={this.handlePanelResize}>
+          onDragStart={this.props.onPanelDragStart}
+          onDrag={this.props.onPanelDrag}
+          onDragStop={this.props.onPanelDragStop}>
           <ItemPanelGroup {...pick(props, ItemPanelGroup.props)}
             panel={panel}
             photo={photo}
@@ -262,7 +259,9 @@ class ItemView extends React.PureComponent {
     onNoteSave: func.isRequired,
     onNoteSelect: func.isRequired,
     onPhotoError: func.isRequired,
-    onPanelResize: func.isRequired,
+    onPanelDrag: func.isRequired,
+    onPanelDragStart: func.isRequired,
+    onPanelDragStop: func.isRequired,
     onUiUpdate: func.isRequired
   }
 }

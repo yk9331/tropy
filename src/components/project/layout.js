@@ -6,6 +6,7 @@ const throttle = require('lodash.throttle')
 const { SASS: { BREAKPOINT } } = require('../../constants')
 const { ProjectView } = require('./view')
 const { ItemView } = require('../item')
+const { bounds } = require('../../dom')
 
 const actions = require('../../actions')
 
@@ -61,10 +62,10 @@ class ProjectLayout extends React.Component {
   }
 
   handleResize = throttle((width) => {
-    this.handleResize(width)
+    this.resize(width)
   }, 50)
 
-  handleResize = (totalWidth) => {
+  resize = (totalWidth) => {
     if (this.props.isGiantViewEnabled && totalWidth > BREAKPOINT.XL) {
       let tandemWidth = totalWidth - this.props.ui.sidebar.width - this.props.ui.panel.width
       let project = tandemWidth * this.state.proportion
@@ -76,7 +77,6 @@ class ProjectLayout extends React.Component {
         totalWidth
       })
     } else {
-      console.log('standard')
       this.setState({
         displayType: 'standard',
         totalWidth
@@ -86,7 +86,6 @@ class ProjectLayout extends React.Component {
   }
 
   handleSidebarResize = (width) => {
-    console.log('sidebar resize on project cont', width)
     let project = this.state.totalWidth - width - this.state.item - this.props.ui.panel.width
     let tandemWidth = this.state.totalWidth  - width - this.props.ui.panel.width
     let proportion = project  / tandemWidth
@@ -115,6 +114,44 @@ class ProjectLayout extends React.Component {
       offset,
       panel: offset
     })
+  }
+
+  shrinkGrow(change, limit) {
+    let project = this.state.project + change
+    let item = this.state.item - change
+    let tandemWidth = this.state.totalWidth  - this.state.sidebar - limit
+    let proportion = (tandemWidth - item) / tandemWidth
+
+    this.setState({
+      project,
+      item,
+      proportion
+    })
+  }
+
+  handlePanelDragStart = (ev, active) => {
+    this.panelLimits = {
+      min: active.props.min,
+      max: active.props.max }
+  }
+
+  handlePanelDrag = ({ pageX }, active) => {
+    const { min, max } = this.panelLimits
+    let delta = pageX - bounds(active.container.current).right
+    let newWidth = this.state.panel + delta
+    if (newWidth < min) {
+      let changeBy =  newWidth - min
+      this.shrinkGrow(changeBy, min)
+    } else if (newWidth > max) {
+      let changeBy =  newWidth - max
+      this.shrinkGrow(changeBy, max)
+    } else {
+      this.handlePanelResize(newWidth)
+    }
+  }
+
+  handlePanelDragStop = () => {
+    this.panelLimits = null
   }
 
   render() {
@@ -163,7 +200,9 @@ class ProjectLayout extends React.Component {
           isModeChanging={this.props.isModeChanging}
           isTrashSelected={!!this.props.nav.trash}
           isProjectClosing={this.props.project.closing}
-          onPanelResize={this.handlePanelResize}
+          onPanelDragStart={this.handlePanelDragStart}
+          onPanelDrag={this.handlePanelDrag}
+          onPanelDragStop={this.handlePanelDragStop}
           onMetadataSave={this.props.onMetadataSave}/>
 
       </div>
