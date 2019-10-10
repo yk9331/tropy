@@ -6,7 +6,7 @@ const throttle = require('lodash.throttle')
 const { SASS: { BREAKPOINT } } = require('../../constants')
 const { ProjectView } = require('./view')
 const { ItemView } = require('../item')
-const { bounds } = require('../../dom')
+const { bounds, viewport } = require('../../dom')
 
 const actions = require('../../actions')
 
@@ -21,12 +21,17 @@ class ProjectLayout extends React.Component {
 
   constructor(props) {
     super(props)
+    let proportion = props.ui.display.proportion || 0.5
+    let tandemWidth = viewport().width - this.props.ui.sidebar.width - this.props.ui.panel.width
+    let project = tandemWidth * proportion
 
     this.state = {
       offset: this.props.ui.panel.width,
       sidebar: this.props.ui.sidebar.width,
+      project,
       panel: this.props.ui.panel.width,
-      proportion: props.ui.display.proportion || 0.5
+      proportion,
+      displayType: viewport().width > BREAKPOINT.XL ? 'giant' : 'standard',
     }
   }
 
