@@ -4,6 +4,7 @@ const React = require('react')
 const { connect } = require('react-redux')
 const throttle = require('lodash.throttle')
 const { SASS: { BREAKPOINT } } = require('../../constants')
+const { restrict } = require('../../common/util')
 const { ProjectView } = require('./view')
 const { ItemView } = require('../item')
 const { bounds, viewport } = require('../../dom')
@@ -108,6 +109,7 @@ class ProjectLayout extends React.Component {
   }
 
   handlePanelResize = (offset) => {
+    console.log ('offset', offset)
     let delta = this.state.offset - offset
     let tandemWidth = this.state.totalWidth  - this.state.sidebar - offset
     let item = this.state.item + delta
@@ -135,24 +137,44 @@ class ProjectLayout extends React.Component {
   }
 
   handlePanelDragStart = (ev, active) => {
+    console.log ('active START', active)
     this.panelLimits = {
       min: active.props.min,
       max: active.props.max }
   }
 
   handlePanelDrag = ({ pageX }, active) => {
+    console.log ('active DRAG', active)
     const { min, max } = this.panelLimits
     let delta = pageX - bounds(active.container.current).right
     let newWidth = this.state.panel + delta
-    if (newWidth < min) {
-      let changeBy =  newWidth - min
-      this.shrinkGrow(changeBy, min)
-    } else if (newWidth > max) {
-      let changeBy =  newWidth - max
-      this.shrinkGrow(changeBy, max)
+
+    if (this.state.displayType === 'giant') {
+      if (newWidth < min) {
+        let changeBy =  newWidth - min
+        this.shrinkGrow(changeBy, min)
+      } else if (newWidth > max) {
+        let changeBy =  newWidth - max
+        this.shrinkGrow(changeBy, max)
+      } else {
+        this.handlePanelResize(newWidth)
+      }
     } else {
-      this.handlePanelResize(newWidth)
+      switch (this.props.mode) {
+        case 'item':
+          delta = pageX - bounds(active.container.current).right
+          newWidth = this.state.panel + delta
+          this.handlePanelResize(restrict(newWidth, min, max))
+          break
+        case 'project':
+          delta = pageX - bounds(active.container.current).left
+          newWidth = this.state.panel - delta
+          this.handlePanelResize(restrict(newWidth, min, max))
+      }
     }
+
+
+
   }
 
   handlePanelDragStop = () => {
