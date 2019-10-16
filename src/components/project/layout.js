@@ -8,6 +8,8 @@ const { restrict } = require('../../common/util')
 const { ProjectView } = require('./view')
 const { ItemView } = require('../item')
 const { bounds, viewport } = require('../../dom')
+const cx = require('classnames')
+
 
 const actions = require('../../actions')
 
@@ -53,13 +55,16 @@ class ProjectLayout extends React.Component {
   }
 
   get classes() {
-    return ['layout', {}]
+    return ['layout',
+      { 'layout-giant': this.state.displayType === 'giant' },
+      { 'layout-standard': this.state.displayType === 'standard' }
+    ]
   }
 
   get style() {
     return {
       position: 'fixed',
-      top: '20px',
+      bottom: '20px',
       right: '0px',
       width: '300px',
       background: 'pink',
@@ -190,7 +195,7 @@ class ProjectLayout extends React.Component {
     var divStyle = { display: 'initial' }
 
     return (
-      <div style={divStyle}>
+      <div className={cx(this.classes)} style={divStyle}>
         {this.renderDebug()}
         <ProjectView {...props}
           width={this.state.project}
