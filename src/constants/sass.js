@@ -131,6 +131,10 @@ const SIDEBAR = {
   DEFAULT_WIDTH: 250
 }
 
+const GIANT = {
+  MIN_ITEM: 475
+}
+
 const TAG = {
   COLORS: [
     'red',
@@ -260,6 +264,7 @@ module.exports =  {
   ROW,
   SCROLLBAR,
   SIDEBAR,
+  GIANT,
   TAG,
   TILE
 }

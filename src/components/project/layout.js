@@ -199,15 +199,15 @@ class ProjectLayout extends React.Component {
     let project = newWidth
     let item = this.state.item + (this.state.project - newWidth)
 
-    if (item >= 475) {
+    if (item >= GIANT.MIN_ITEM) {
       this.setState({
         project,
         item
       })
     } else {
       this.setState({
-        project: (this.state.project + this.state.item) - 475,
-        item: 475
+        project: (this.state.project + this.state.item) - GIANT.MIN_ITEM,
+        item: GIANT.MIN_ITEM
       })
     }
 
