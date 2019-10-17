@@ -3,7 +3,7 @@
 const React = require('react')
 const { connect } = require('react-redux')
 const throttle = require('lodash.throttle')
-const { SASS: { BREAKPOINT } } = require('../../constants')
+const { SASS: { BREAKPOINT, GIANT } } = require('../../constants')
 const { restrict } = require('../../common/util')
 const { ProjectView } = require('./view')
 const { ItemView } = require('../item')
