@@ -10,6 +10,8 @@ const { pick, } = require('../../common/util')
 const { array, bool, func, object, number, string } = require('prop-types')
 const { isImageSupported } = require('../../constants/mime')
 const { ITEM } = require('../../constants/sass')
+const { Resizable } = require('../resizable')
+
 
 
 class ProjectView extends React.Component {
@@ -77,40 +79,50 @@ class ProjectView extends React.Component {
       <div id="project-view">
         <ProjectSidebar {...pick(this.props, ProjectSidebar.props)}
           isDisabled={!isActive}/>
-        <div className="main">
-          <section className="items" style={this.style}>
-            <header>
-              <ProjectToolbar
-                count={items.length}
-                canCreateItems={!nav.trash}
-                isDisabled={!isActive}
-                maxZoom={maxZoom}
-                query={nav.query}
-                zoom={zoom}
-                onItemCreate={this.handleItemImport}
-                onSearch={onSearch}
-                onZoomChange={this.handleZoomChange}/>
-            </header>
+        <Resizable
+          edge="right"
+          min={430}
+          value={this.props.width}
+          onDragStart={this.props.onProjectDragStart}
+          onDrag={this.props.onProjectDrag}
+          onDragStop={this.props.onProjectDragStop}>
+            <div className="main">
+              <section className="items" style={this.style}>
+                <header>
+                  <ProjectToolbar
+                    count={items.length}
+                    canCreateItems={!nav.trash}
+                    isDisabled={!isActive}
+                    maxZoom={maxZoom}
+                    query={nav.query}
+                    zoom={zoom}
+                    onItemCreate={this.handleItemImport}
+                    onSearch={onSearch}
+                    onZoomChange={this.handleZoomChange}/>
+                </header>
 
-            <ItemIterator {...pick(this.props, ItemIterator.getPropKeys())}
-              items={items}
-              isEmpty={isEmpty}
-              photos={photos}
-              edit={edit.column}
-              keymap={keymap.ItemIterator}
-              list={nav.list}
-              selection={nav.items}
-              size={size}
-              tags={tags}
-              hasScrollbars={this.context.state.scrollbars}
-              isDisabled={nav.trash}
-              isOver={isOver && canDrop}
-              onCreate={onItemCreate}
-              onSelect={onItemSelect}
-              onSort={this.handleSort}/>
-            <div className="fake-gap"/>
-          </section>
-        </div>
+                <ItemIterator {...pick(this.props, ItemIterator.getPropKeys())}
+                  items={items}
+                  isEmpty={isEmpty}
+                  photos={photos}
+                  edit={edit.column}
+                  keymap={keymap.ItemIterator}
+                  list={nav.list}
+                  selection={nav.items}
+                  size={size}
+                  tags={tags}
+                  hasScrollbars={this.context.state.scrollbars}
+                  isDisabled={nav.trash}
+                  isOver={isOver && canDrop}
+                  onCreate={onItemCreate}
+                  onSelect={onItemSelect}
+                  onSort={this.handleSort}/>
+                {this.props.displayType ===`standard` &&
+                  <div className="fake-gap"/>
+                }
+              </section>
+            </div>
+        </Resizable>
       </div>
     )
   }
