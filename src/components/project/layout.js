@@ -66,7 +66,7 @@ class ProjectLayout extends React.Component {
       position: 'fixed',
       bottom: '20px',
       right: '0px',
-      width: '300px',
+      width: '100%',
       background: 'pink',
       zIndex: 1100
     }
@@ -148,6 +148,12 @@ class ProjectLayout extends React.Component {
       max: active.props.max }
   }
 
+  handleProjectDragStart = (ev, active) => {
+    console.log ('active START', active)
+    this.projectLimits = {
+      min: active.props.min}
+  }
+
   handlePanelDrag = ({ pageX }, active) => {
     console.log ('active DRAG', active)
     const { min, max } = this.panelLimits
@@ -155,15 +161,17 @@ class ProjectLayout extends React.Component {
     let newWidth = this.state.panel + delta
 
     if (this.state.displayType === 'giant') {
-      if (newWidth < min) {
-        let changeBy =  newWidth - min
-        this.shrinkGrow(changeBy, min)
-      } else if (newWidth > max) {
-        let changeBy =  newWidth - max
-        this.shrinkGrow(changeBy, max)
-      } else {
-        this.handlePanelResize(newWidth)
-      }
+      //this.shrinkGrow(delta, this.state.panel)
+      // if (newWidth < min) {
+      //   let changeBy =  newWidth - min
+      //   this.shrinkGrow(changeBy, min)
+      // } else if (newWidth > max) {
+      //   let changeBy =  newWidth - max
+      //   this.shrinkGrow(changeBy, max)
+      // } else {
+      //   this.handlePanelResize(newWidth)
+      // }
+      this.handlePanelResize(restrict(newWidth, min, max))
     } else {
       switch (this.props.mode) {
         case 'item':
@@ -177,13 +185,40 @@ class ProjectLayout extends React.Component {
           this.handlePanelResize(restrict(newWidth, min, max))
       }
     }
+  }
+
+  handleProjectDrag = ({ pageX }, active) => {
+    console.log ('active DRAG', pageX, bounds(active.container.current).right)
+
+    const { min } = this.projectLimits
+
+    let delta = pageX - bounds(active.container.current).right
+    let newWidth = restrict(this.state.project + delta, min )
 
 
+    let project = newWidth
+    let item = this.state.item + (this.state.project - newWidth)
+
+    if (item >= 475) {
+      this.setState({
+        project,
+        item
+      })
+    } else {
+      this.setState({
+        project: (this.state.project + this.state.item) - 475,
+        item: 475
+      })
+    }
 
   }
 
   handlePanelDragStop = () => {
     this.panelLimits = null
+  }
+
+  handleProjectDragStop = () => {
+    this.projectLimits = null
   }
 
   render() {
@@ -212,6 +247,9 @@ class ProjectLayout extends React.Component {
           display={ui.display}
           displayType={this.state.displayType}
           onSidebarResize={this.handleSidebarResize}
+          onProjectDragStart={this.handleProjectDragStart}
+          onProjectDrag={this.handleProjectDrag}
+          onProjectDragStop={this.handleProjectDragStop}
           onMetadataSave={this.props.onMetadataSave}/>
 
         <ItemView {...props}
@@ -225,7 +263,7 @@ class ProjectLayout extends React.Component {
           photos={this.props.visiblePhotos}
           panel={ui.panel}
           offset={this.state.offset}
-          offset2={ui.sidebar.width + this.state.project}
+          offset2={this.state.sidebar + this.state.project}
           mode={this.props.mode}
           display={ui.display}
           displayType={this.state.displayType}
@@ -246,12 +284,11 @@ class ProjectLayout extends React.Component {
       <section ref={this.container}>
         <div
           style={this.style}>
-          <div>{this.props.ui.display.proportion} {this.state.displayType}</div>
-          s {this.state.sidebar} |
-          P {this.state.project} |
-          p {this.state.panel} |
-          I {this.state.item}<br/>
-          O {this.state.offset}
+          <span style={{ width: this.state.sidebar + 'px', display: 'inline-block', backgroundColor: 'orange' }}> {this.state.sidebar}</span>
+          <span style={{ width: this.state.project + 'px', display: 'inline-block', backgroundColor: 'aqua' }}> {this.state.project}</span>
+          <span style={{ width: this.state.panel + 'px', display: 'inline-block', backgroundColor: 'lightgreen' }}> {this.state.panel}</span>
+          <span style={{ width: this.state.item + 'px', display: 'inline-block', backgroundColor: 'gray' }}> {this.state.item}</span>
+          <div>{this.props.ui.display.proportion} {this.state.displayType} {this.state.offset} {this.props.ui.sidebar.width + this.state.project}</div>
         </div>
       </section>
     )

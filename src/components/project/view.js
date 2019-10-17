@@ -82,7 +82,7 @@ class ProjectView extends React.Component {
         <Resizable
           edge="right"
           min={430}
-          value={this.props.width}
+          value={this.props.width-3}
           onDragStart={this.props.onProjectDragStart}
           onDrag={this.props.onProjectDrag}
           onDragStop={this.props.onProjectDragStop}>
