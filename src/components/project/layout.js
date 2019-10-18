@@ -113,45 +113,27 @@ class ProjectLayout extends React.Component {
 
   }
 
-  handlePanelResize = (offset) => {
-    console.log ('offset', offset)
-    let delta = this.state.offset - offset
-    let tandemWidth = this.state.totalWidth  - this.state.sidebar - offset
+  handlePanelResize = (newWidth) => {
+    let delta = this.state.offset - newWidth
     let item = this.state.item + delta
-    let proportion = (tandemWidth - item) / tandemWidth
 
     this.setState({
       item,
-      proportion,
-      offset,
-      panel: offset
-    })
-  }
-
-  shrinkGrow(change, limit) {
-    let project = this.state.project + change
-    let item = this.state.item - change
-    let tandemWidth = this.state.totalWidth  - this.state.sidebar - limit
-    let proportion = (tandemWidth - item) / tandemWidth
-
-    this.setState({
-      project,
-      item,
-      proportion
+      offset: newWidth,
+      panel: newWidth
     })
   }
 
   handlePanelDragStart = (ev, active) => {
-    console.log ('active START', active)
     this.panelLimits = {
       min: active.props.min,
       max: active.props.max }
   }
 
   handleProjectDragStart = (ev, active) => {
-    console.log ('active START', active)
     this.projectLimits = {
-      min: active.props.min}
+      min: active.props.min
+    }
   }
 
   handlePanelDrag = ({ pageX }, active) => {
@@ -161,16 +143,6 @@ class ProjectLayout extends React.Component {
     let newWidth = this.state.panel + delta
 
     if (this.state.displayType === 'giant') {
-      //this.shrinkGrow(delta, this.state.panel)
-      // if (newWidth < min) {
-      //   let changeBy =  newWidth - min
-      //   this.shrinkGrow(changeBy, min)
-      // } else if (newWidth > max) {
-      //   let changeBy =  newWidth - max
-      //   this.shrinkGrow(changeBy, max)
-      // } else {
-      //   this.handlePanelResize(newWidth)
-      // }
       this.handlePanelResize(restrict(newWidth, min, max))
     } else {
       switch (this.props.mode) {
@@ -188,14 +160,9 @@ class ProjectLayout extends React.Component {
   }
 
   handleProjectDrag = ({ pageX }, active) => {
-    console.log ('active DRAG', pageX, bounds(active.container.current).right)
-
     const { min } = this.projectLimits
-
     let delta = pageX - bounds(active.container.current).right
     let newWidth = restrict(this.state.project + delta, min )
-
-
     let project = newWidth
     let item = this.state.item + (this.state.project - newWidth)
 
@@ -213,13 +180,17 @@ class ProjectLayout extends React.Component {
 
   }
 
-  handlePanelDragStop = () => {
-    this.panelLimits = null
+  get proportion() {
+    let tandemWidth = this.state.totalWidth  - this.state.sidebar - this.state.panel
+    return (tandemWidth - this.state.item) / tandemWidth
   }
 
-  handleProjectDragStop = () => {
-    this.projectLimits = null
+  handlePanelDragStop = () => {
+    this.panelLimits = null
+    this.setState({ proportion: this.proportion })
   }
+
+  handleProjectDragStop = () => { this.projectLimits = null }
 
   render() {
     const  {
@@ -288,7 +259,7 @@ class ProjectLayout extends React.Component {
           <span style={{ width: this.state.project + 'px', display: 'inline-block', backgroundColor: 'aqua' }}> {this.state.project}</span>
           <span style={{ width: this.state.panel + 'px', display: 'inline-block', backgroundColor: 'lightgreen' }}> {this.state.panel}</span>
           <span style={{ width: this.state.item + 'px', display: 'inline-block', backgroundColor: 'gray' }}> {this.state.item}</span>
-          <div>{this.props.ui.display.proportion} {this.state.displayType} {this.state.offset} {this.props.ui.sidebar.width + this.state.project}</div>
+          <div> {this.state.proportion} {this.props.ui.display.proportion} {this.state.displayType} {this.state.offset} {this.props.ui.sidebar.width + this.state.project}</div>
         </div>
       </section>
     )
