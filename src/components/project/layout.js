@@ -24,18 +24,20 @@ class ProjectLayout extends React.Component {
 
   constructor(props) {
     super(props)
-    let proportion = props.ui.display.proportion || 0.5
+    let proportion = 0.5
     let tandemWidth = viewport().width - this.props.ui.sidebar.width - this.props.ui.panel.width
     let project = tandemWidth * proportion
 
     this.state = {
       offset: this.props.ui.panel.width,
-      sidebar: this.props.ui.sidebar.width,
+      sidebar: this.props.ui.sidebar.width || 200,
       project,
-      panel: this.props.ui.panel.width,
+      panel: this.props.ui.panel.width || 200,
       proportion,
       displayType: viewport().width > BREAKPOINT.XL ? 'giant' : 'standard',
     }
+
+    console.log('CONSTRUCTOR state', this.state)
   }
 
 
@@ -72,6 +74,11 @@ class ProjectLayout extends React.Component {
     }
   }
 
+  get proportion() {
+    let tandemWidth = this.state.totalWidth  - this.state.sidebar - this.state.panel
+    return (tandemWidth - this.state.item) / tandemWidth
+  }
+
   handleResize = throttle((width) => {
     this.resize(width)
   }, 50)
@@ -79,8 +86,8 @@ class ProjectLayout extends React.Component {
   resize = (totalWidth) => {
     if (this.props.isGiantViewEnabled && totalWidth > BREAKPOINT.XL) {
       let tandemWidth = totalWidth - this.props.ui.sidebar.width - this.props.ui.panel.width
-      let project = tandemWidth * this.state.proportion
-      let item = tandemWidth * (1 - this.state.proportion)
+      let project = Math.round(tandemWidth * this.state.proportion)
+      let item = Math.round(tandemWidth * (1 - this.state.proportion))
       this.setState({
         displayType: 'giant',
         project,
@@ -99,23 +106,55 @@ class ProjectLayout extends React.Component {
   handleSidebarResize = (width) => {
     let project = this.state.totalWidth - width - this.state.item - this.props.ui.panel.width
     let tandemWidth = this.state.totalWidth  - width - this.props.ui.panel.width
-    let proportion = project  / tandemWidth
-
+    let proportion = (project  / tandemWidth).toFixed(3)
     this.setState({
       project: Math.round(project),
       proportion,
       sidebar: Math.round(width)
     })
-    this.props.onUiUpdate({
-      sidebar: { width: Math.round(width) },
-      display: { proportion: proportion },
-    })
-
   }
 
+  handleSidebarDragStop = () => {
+    this.props.onUiUpdate({
+      sidebar: { width: this.state.sidebar },
+      display: { proportion: this.state.proportion }
+    })
+  }
+
+  handleProjectDragStart = (ev, active) => {
+    this.projectLimits = {
+      min: active.props.min
+    }
+  }
+
+  handleProjectDrag = ({ pageX }, active) => {
+    const { min } = this.projectLimits
+    let delta = pageX - bounds(active.container.current).right
+    let newWidth = restrict(this.state.project + delta, min )
+    let project = newWidth
+    let item = this.state.item + (this.state.project - newWidth)
+
+    if (item >= GIANT.MIN_ITEM) {
+      this.setState({
+        project,
+        item
+      })
+    } else {
+      this.setState({
+        project: (this.state.project + this.state.item) - GIANT.MIN_ITEM,
+        item: GIANT.MIN_ITEM
+      })
+    }
+  }
+
+  handleProjectDragStop = () => { this.projectLimits = null }
+
   handlePanelResize = (newWidth) => {
+    newWidth = Math.round(newWidth)
     let delta = this.state.offset - newWidth
     let item = this.state.item + delta
+
+    console.log( 'STATE', item, newWidth)
 
     this.setState({
       item,
@@ -128,12 +167,6 @@ class ProjectLayout extends React.Component {
     this.panelLimits = {
       min: active.props.min,
       max: active.props.max }
-  }
-
-  handleProjectDragStart = (ev, active) => {
-    this.projectLimits = {
-      min: active.props.min
-    }
   }
 
   handlePanelDrag = ({ pageX }, active) => {
@@ -159,39 +192,11 @@ class ProjectLayout extends React.Component {
     }
   }
 
-  handleProjectDrag = ({ pageX }, active) => {
-    const { min } = this.projectLimits
-    let delta = pageX - bounds(active.container.current).right
-    let newWidth = restrict(this.state.project + delta, min )
-    let project = newWidth
-    let item = this.state.item + (this.state.project - newWidth)
-
-    if (item >= GIANT.MIN_ITEM) {
-      this.setState({
-        project,
-        item
-      })
-    } else {
-      this.setState({
-        project: (this.state.project + this.state.item) - GIANT.MIN_ITEM,
-        item: GIANT.MIN_ITEM
-      })
-    }
-
-  }
-
-  get proportion() {
-    let tandemWidth = this.state.totalWidth  - this.state.sidebar - this.state.panel
-    return (tandemWidth - this.state.item) / tandemWidth
-  }
-
   handlePanelDragStop = () => {
     this.panelLimits = null
     this.setState({ proportion: this.proportion })
   }
-
-  handleProjectDragStop = () => { this.projectLimits = null }
-
+  
   render() {
     const  {
       ui,
@@ -218,6 +223,7 @@ class ProjectLayout extends React.Component {
           display={ui.display}
           displayType={this.state.displayType}
           onSidebarResize={this.handleSidebarResize}
+          onSidebarDragStop={this.handleSidebarDragStop}
           onProjectDragStart={this.handleProjectDragStart}
           onProjectDrag={this.handleProjectDrag}
           onProjectDragStop={this.handleProjectDragStop}
