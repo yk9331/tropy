@@ -228,9 +228,6 @@ class ProjectSidebar extends React.PureComponent {
     })
   }
 
-  handleSidebarResize = ({ value }) => {
-    this.props.onSidebarResize(value)
-  }
 
   render() {
     let root = this.props.lists[this.props.root]
@@ -243,7 +240,7 @@ class ProjectSidebar extends React.PureComponent {
         max={SIDEBAR.MAX_WIDTH}
         value={this.props.width}
         onDragStop={this.props.onSidebarDragStop}
-        onResize={this.handleSidebarResize}>
+        onDrag={this.props.onSidebarDrag}>
         <Sidebar>
           <Titlebar isOptional/>
           <SidebarBody onContextMenu={this.handleContextMenu}>
@@ -368,7 +365,8 @@ class ProjectSidebar extends React.PureComponent {
     onTagSave: func.isRequired,
     onTagSelect: func.isRequired,
     onSidebarResize: func.isRequired,
-    onSidebarDragStop: func.isRequired
+    onSidebarDragStop: func.isRequired,
+    onSidebarDrag: func.isRequired
   }
 
   static defaultProps = {

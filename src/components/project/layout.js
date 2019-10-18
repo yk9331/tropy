@@ -78,7 +78,7 @@ class ProjectLayout extends React.Component {
   get proportion() {
     const { totalWidth, sidebar, panel, item } = this.state
     let tandemWidth = totalWidth  - sidebar - panel
-    return ((tandemWidth - item) / tandemWidth).toFixed(3)
+    return ((tandemWidth - item) / tandemWidth).toFixed(GIANT.DEC_PLACES)
   }
 
   handleResize = throttle((width) => {
@@ -106,15 +106,20 @@ class ProjectLayout extends React.Component {
 
   }
 
-  handleSidebarResize = (width) => {
-    let project = this.state.totalWidth - width - this.state.item - this.props.ui.panel.width
-    let tandemWidth = this.state.totalWidth  - width - this.props.ui.panel.width
-    let proportion = (project  / tandemWidth).toFixed(3)
-    this.setState({
-      project: Math.round(project),
-      proportion,
-      sidebar: Math.round(width)
-    })
+  handleSidebarDrag = ({ pageX }) => {
+    let total = this.state.project + this.state.sidebar
+    let project = total - pageX
+    if (project >= GIANT.MIN_PROJECT) {
+      this.setState({
+        sidebar: pageX,
+        project
+      })
+    } else {
+      this.setState({
+        sidebar: total - GIANT.MIN_PROJECT,
+        project: GIANT.MIN_PROJECT
+      })
+    }
   }
 
   handleSidebarDragStop = () => {
@@ -221,7 +226,7 @@ class ProjectLayout extends React.Component {
           zoom={ui.zoom}
           display={ui.display}
           displayType={this.state.displayType}
-          onSidebarResize={this.handleSidebarResize}
+          onSidebarDrag={this.handleSidebarDrag}
           onSidebarDragStop={this.handleSidebarDragStop}
           onProjectDragStart={this.handleProjectDragStart}
           onProjectDrag={this.handleProjectDrag}

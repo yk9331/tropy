@@ -151,6 +151,9 @@ class ProjectView extends React.Component {
     onItemTagAdd: func.isRequired,
     onSearch: func.isRequired,
     onSort: func.isRequired,
+    onProjectDragStart: func.isRequired,
+    onProjectDrag: func.isRequired,
+    onProjectDragStop: func.isRequired,
     onUiUpdate: func.isRequired
   }
 }
