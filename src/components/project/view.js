@@ -81,10 +81,11 @@ class ProjectView extends React.Component {
           isDisabled={!isActive}/>
         <Resizable
           edge="right"
-          min={430}
+          max={this.props.projectMax}
+          min={this.props.projectMin}
           value={this.props.width-3}
+          onResize={this.props.onProjectResize}
           onDragStart={this.props.onProjectDragStart}
-          onDrag={this.props.onProjectDrag}
           onDragStop={this.props.onProjectDragStop}>
             <div className="main">
               <section className="items" style={this.style}>
@@ -140,6 +141,8 @@ class ProjectView extends React.Component {
     nav: object.isRequired,
     offset: number.isRequired,
     photos: object.isRequired,
+    projectMax: number.isRequired,
+    projectMin: number.isRequired,
     tags: object.isRequired,
     dt: func.isRequired,
     displayType: string.isRequired,
@@ -152,7 +155,7 @@ class ProjectView extends React.Component {
     onSearch: func.isRequired,
     onSort: func.isRequired,
     onProjectDragStart: func.isRequired,
-    onProjectDrag: func.isRequired,
+    onProjectResize: func.isRequired,
     onProjectDragStop: func.isRequired,
     onUiUpdate: func.isRequired
   }

@@ -100,7 +100,9 @@ class ProjectLayout extends React.Component {
         item,
         totalWidth,
         sidebarMax: sidebarLimits.max,
-        sidebarMin: sidebarLimits.min
+        sidebarMin: sidebarLimits.min,
+        projectMax: projectLimits.max,
+        projectMin: projectLimits.min
       })
     } else {
       this.setState({
@@ -116,6 +118,14 @@ class ProjectLayout extends React.Component {
     return {
       max: restrict(project, SIDEBAR.MIN_WIDTH, SIDEBAR.MAX_WIDTH),
       min: SIDEBAR.MIN_WIDTH
+    }
+  }
+
+  calculateProjectLimits = () => {
+    let duo = this.state.project + this.state.item
+    return {
+      max: duo - GIANT.MIN_ITEM,
+      min: GIANT.MIN_PROJECT
     }
   }
 
@@ -139,24 +149,11 @@ class ProjectLayout extends React.Component {
     }
   }
 
-  handleProjectDrag = ({ pageX }, active) => {
-    const { min } = this.projectLimits
-    let delta = pageX - bounds(active.container.current).right
-    let newWidth = restrict(this.state.project + delta, min)
-    let project = newWidth
-    let item = this.state.item + (this.state.project - newWidth)
-
-    if (item >= GIANT.MIN_ITEM) {
-      this.setState({
-        project,
-        item
-      })
-    } else {
-      this.setState({
-        project: (this.state.project + this.state.item) - GIANT.MIN_ITEM,
-        item: GIANT.MIN_ITEM
-      })
-    }
+  handleProjectOnResize = ({ value }) => {
+    this.setState({
+      project: value,
+      item: this.state.item + (this.state.project - value)
+    })
   }
 
   handleProjectDragStop = () => { this.projectLimits = null }
@@ -226,6 +223,8 @@ class ProjectLayout extends React.Component {
           columns={this.props.columns}
           offset={this.state.offset}
           photos={this.props.photos}
+          projectMax={this.state.projectMax}
+          projectMin={this.state.projectMin}
           templates={this.props.templates}
           sidebarMax={this.state.sidebarMax}
           sidebarMin={this.state.sidebarMin}
@@ -235,7 +234,7 @@ class ProjectLayout extends React.Component {
           onSidebarResize={this.handleSidebarOnResize}
           onSidebarDragStop={this.handleSidebarDragStop}
           onProjectDragStart={this.handleProjectDragStart}
-          onProjectDrag={this.handleProjectDrag}
+          onProjectResize={this.handleProjectOnResize}
           onProjectDragStop={this.handleProjectDragStop}
           onMetadataSave={this.props.onMetadataSave}/>
 
