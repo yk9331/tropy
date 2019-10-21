@@ -3,7 +3,7 @@
 const React = require('react')
 const { connect } = require('react-redux')
 const throttle = require('lodash.throttle')
-const { SASS: { BREAKPOINT, GIANT } } = require('../../constants')
+const { SASS: { BREAKPOINT, GIANT, SIDEBAR } } = require('../../constants')
 const { restrict } = require('../../common/util')
 const { ProjectView } = require('./view')
 const { ItemView } = require('../item')
@@ -32,6 +32,8 @@ class ProjectLayout extends React.Component {
     this.state = {
       offset: panel.width,
       sidebar: sidebar.width,
+      sidebarMin: SIDEBAR.MIN_WIDTH,
+      sidebarMax: SIDEBAR.MAX_WIDTH,
       project,
       panel: panel.width,
       proportion,
@@ -107,11 +109,13 @@ class ProjectLayout extends React.Component {
   }
 
   handleSidebarDrag = ({ pageX }) => {
+    let sidebar = restrict(pageX, SIDEBAR.MIN_WIDTH, SIDEBAR.MAX_WIDTH)
     let total = this.state.project + this.state.sidebar
-    let project = total - pageX
+    let project = total - sidebar
+
     if (project >= GIANT.MIN_PROJECT) {
       this.setState({
-        sidebar: pageX,
+        sidebar,
         project
       })
     } else {

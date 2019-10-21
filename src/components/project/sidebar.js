@@ -10,7 +10,7 @@ const { LastImportListNode, ListTree, TrashListNode } = require('../list')
 const { TagList } = require('../tag')
 const { Sidebar, SidebarBody } = require('../sidebar')
 const { ProjectName } = require('./name')
-const { TABS, LIST, SASS: { SIDEBAR } } = require('../../constants')
+const { TABS, LIST } = require('../../constants')
 const { has, last } = require('../../common/util')
 const { match } = require('../../keymap')
 const { testFocusChange } = require('../../dom')
@@ -236,8 +236,8 @@ class ProjectSidebar extends React.PureComponent {
       <Resizable
         edge="right"
         isBuffered
-        min={SIDEBAR.MIN_WIDTH}
-        max={SIDEBAR.MAX_WIDTH}
+        min={this.props.sidebarMin}
+        max={this.props.sidebarMax}
         value={this.props.width}
         onDragStop={this.props.onSidebarDragStop}
         onDrag={this.props.onSidebarDrag}>
@@ -341,6 +341,8 @@ class ProjectSidebar extends React.PureComponent {
       items: number
     }).isRequired,
     root: number.isRequired,
+    sidebarMax: number.isRequired,
+    sidebarMin: number.isRequired,
     tagColor: string,
     tags: arrayOf(object).isRequired,
     tagSelection: arrayOf(number).isRequired,
@@ -364,7 +366,6 @@ class ProjectSidebar extends React.PureComponent {
     onTagDelete: func.isRequired,
     onTagSave: func.isRequired,
     onTagSelect: func.isRequired,
-    onSidebarResize: func.isRequired,
     onSidebarDragStop: func.isRequired,
     onSidebarDrag: func.isRequired
   }

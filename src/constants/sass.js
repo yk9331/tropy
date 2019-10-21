@@ -134,7 +134,7 @@ const SIDEBAR = {
 const GIANT = {
   DEC_PLACES: 3,
   MIN_ITEM: 475,
-  MIN_PROJECT: 430
+  MIN_PROJECT: 435
 }
 
 const TAG = {
