@@ -227,6 +227,8 @@ class ProjectLayout extends React.Component {
           offset={this.state.offset}
           photos={this.props.photos}
           templates={this.props.templates}
+          sidebarMax={this.state.sidebarMax}
+          sidebarMin={this.state.sidebarMin}
           zoom={ui.zoom}
           display={ui.display}
           displayType={this.state.displayType}
