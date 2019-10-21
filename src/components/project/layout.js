@@ -89,6 +89,7 @@ class ProjectLayout extends React.Component {
 
   resize = (totalWidth) => {
     const { ui } = this.props
+    let sidebarLimits = this.calculateSidebarLimits()
     if (this.props.isGiantViewEnabled && totalWidth > BREAKPOINT.XL) {
       let tandemWidth = totalWidth - ui.sidebar.width - ui.panel.width
       let project = Math.ceil(tandemWidth * this.state.proportion)
@@ -97,7 +98,9 @@ class ProjectLayout extends React.Component {
         displayType: 'giant',
         project,
         item,
-        totalWidth
+        totalWidth,
+        sidebarMax: sidebarLimits.max,
+        sidebarMin: sidebarLimits.min
       })
     } else {
       this.setState({
@@ -108,22 +111,19 @@ class ProjectLayout extends React.Component {
 
   }
 
-  handleSidebarDrag = ({ pageX }) => {
-    let sidebar = restrict(pageX, SIDEBAR.MIN_WIDTH, SIDEBAR.MAX_WIDTH)
-    let total = this.state.project + this.state.sidebar
-    let project = total - sidebar
-
-    if (project >= GIANT.MIN_PROJECT) {
-      this.setState({
-        sidebar,
-        project
-      })
-    } else {
-      this.setState({
-        sidebar: total - GIANT.MIN_PROJECT,
-        project: GIANT.MIN_PROJECT
-      })
+  calculateSidebarLimits = () => {
+    let project = (this.state.sidebar + this.state.project) - GIANT.MIN_PROJECT
+    return {
+      max: restrict(project, SIDEBAR.MIN_WIDTH, SIDEBAR.MAX_WIDTH),
+      min: SIDEBAR.MIN_WIDTH
     }
+  }
+
+  handleSidebarOnResize = ({ value }) => {
+    this.setState({
+      sidebar: value,
+      project: this.state.project + this.state.sidebar - value
+    })
   }
 
   handleSidebarDragStop = () => {
@@ -232,7 +232,7 @@ class ProjectLayout extends React.Component {
           zoom={ui.zoom}
           display={ui.display}
           displayType={this.state.displayType}
-          onSidebarDrag={this.handleSidebarDrag}
+          onSidebarResize={this.handleSidebarOnResize}
           onSidebarDragStop={this.handleSidebarDragStop}
           onProjectDragStart={this.handleProjectDragStart}
           onProjectDrag={this.handleProjectDrag}
