@@ -54,6 +54,7 @@ class ItemContainer extends React.PureComponent {
         width: `${this.props.width}px`
       }
     }
+    return {}
   }
 
   getResizableProps(layout = this.props.settings.layout) {
@@ -169,7 +170,8 @@ class ItemContainer extends React.PureComponent {
     onPhotoSelect: func.isRequired,
     onSelectionCreate: func.isRequired,
     onSelectionSave: func.isRequired,
-    onUiUpdate: func.isRequired
+    onUiUpdate: func.isRequired,
+    width: number
   }
 }
 

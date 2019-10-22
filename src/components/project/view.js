@@ -34,10 +34,8 @@ class ProjectView extends React.Component {
 
   get style() {
     if (this.props.displayType === 'giant') {
-      console.log("displayType GIANT")
       return { flexBasis: this.props.width + 'px' }
     }
-    console.log("displayType STANDARD")
     return { flexBasis: `calc(100% - ${this.props.offset}px)` }
   }
 
@@ -109,7 +107,7 @@ class ProjectView extends React.Component {
               onCreate={onItemCreate}
               onSelect={onItemSelect}
               onSort={this.handleSort}/>
-            {this.props.displayType ===`standard` &&
+            {this.props.displayType === 'standard' &&
               <div className="fake-gap"/>
             }
           </section>

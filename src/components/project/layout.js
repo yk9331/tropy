@@ -3,7 +3,8 @@
 const React = require('react')
 const { connect } = require('react-redux')
 const throttle = require('lodash.throttle')
-const { SASS: { BREAKPOINT, GIANT, SIDEBAR } } = require('../../constants')
+const { SASS: { BREAKPOINT, GIANT,
+  SIDEBAR, PANEL } } = require('../../constants')
 const { restrict } = require('../../common/util')
 const { ProjectView } = require('./view')
 const { ItemView } = require('../item')
@@ -40,7 +41,11 @@ class ProjectLayout extends React.Component {
       projectMax: project,
       projectMin: GIANT.MIN_PROJECT,
       panel: panel.width,
+      panelMax: PANEL.MAX_WIDTH,
+      panelMin: PANEL.MIN_WIDTH,
       item,
+      itemMax: 0,
+      itemMin: 0,
       proportion,
       displayType: viewport().width > BREAKPOINT.XL ? 'giant' : 'standard',
     }
@@ -286,14 +291,23 @@ class ProjectLayout extends React.Component {
   }
 
   renderDebug() {
+    const { sidebar, project, panel, item } = this.state
+    function inlineStyle(w, c) {
+      return { width: w + 'px', display: 'inline-block', backgroundColor: c }
+    }
     return (
       <section ref={this.container} style={this.style}>
         <div>
-          <span style={{ width: this.state.sidebar + 'px', display: 'inline-block', backgroundColor: 'orange' }}> {this.state.sidebar} {this.state.sidebarMin}-{this.state.sidebarMax}</span>
-          <span style={{ width: this.state.project + 'px', display: 'inline-block', backgroundColor: 'aqua' }}> {this.state.project} {this.state.projectMin}-{this.state.projectMax}</span>
-          <span style={{ width: this.state.panel + 'px', display: 'inline-block', backgroundColor: 'lightgreen' }}> {this.state.panel}</span>
-          <span style={{ width: this.state.item + 'px', display: 'inline-block', backgroundColor: 'gray' }}> {this.state.item}</span>
-          <div> {this.state.proportion} {this.props.ui.display.proportion} {this.state.displayType} {this.state.offset} {this.props.ui.sidebar.width + this.state.project}</div>
+          <span style={inlineStyle(sidebar, 'orange')}>
+            {sidebar} {this.state.sidebarMin}-{this.state.sidebarMax}</span>
+          <span style={inlineStyle(project, 'aqua')}>
+            {project} {this.state.projectMin}-{this.state.projectMax}</span>
+          <span style={inlineStyle(panel, 'lightgreen')}>
+            {panel} {this.state.panelMin}-{this.state.panelMax}</span>
+          <span style={inlineStyle(item, 'gray')}>
+            {item} {this.state.itemMin}-{this.state.itemMax}</span>
+          <div>{this.state.proportion} {this.props.ui.display.proportion}
+            {this.state.displayType}</div>
         </div>
       </section>
     )
