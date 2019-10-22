@@ -144,6 +144,12 @@ class ProjectLayout extends React.Component {
     })
   }
 
+  handleSidebarDragStart = () => {
+    this.setState({
+      projectMax: this.state.project + (this.state.sidebar - SIDEBAR.MIN_WIDTH)
+    })
+  }
+
   handleProjectDragStart = (ev, active) => {
     this.projectLimits = {
       min: active.props.min
@@ -233,6 +239,7 @@ class ProjectLayout extends React.Component {
           display={ui.display}
           displayType={this.state.displayType}
           onSidebarResize={this.handleSidebarOnResize}
+          onSidebarDragStart={this.handleSidebarDragStart}
           onSidebarDragStop={this.handleSidebarDragStop}
           onProjectDragStart={this.handleProjectDragStart}
           onProjectResize={this.handleProjectOnResize}
@@ -271,8 +278,8 @@ class ProjectLayout extends React.Component {
       <section ref={this.container}>
         <div
           style={this.style}>
-          <span style={{ width: this.state.sidebar + 'px', display: 'inline-block', backgroundColor: 'orange' }}> {this.state.sidebar}</span>
-          <span style={{ width: this.state.project + 'px', display: 'inline-block', backgroundColor: 'aqua' }}> {this.state.project}</span>
+          <span style={{ width: this.state.sidebar + 'px', display: 'inline-block', backgroundColor: 'orange' }}> {this.state.sidebar} {this.state.sidebarMin}-{this.state.sidebarMax}</span>
+          <span style={{ width: this.state.project + 'px', display: 'inline-block', backgroundColor: 'aqua' }}> {this.state.project} {this.state.projectMin}-{this.state.projectMax}</span>
           <span style={{ width: this.state.panel + 'px', display: 'inline-block', backgroundColor: 'lightgreen' }}> {this.state.panel}</span>
           <span style={{ width: this.state.item + 'px', display: 'inline-block', backgroundColor: 'gray' }}> {this.state.item}</span>
           <div> {this.state.proportion} {this.props.ui.display.proportion} {this.state.displayType} {this.state.offset} {this.props.ui.sidebar.width + this.state.project}</div>
