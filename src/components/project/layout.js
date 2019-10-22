@@ -220,10 +220,8 @@ class ProjectLayout extends React.Component {
       ...props
     } = this.props
 
-    var divStyle = { display: 'initial' }
-
     return (
-      <div className={cx(this.classes)} style={divStyle}>
+      <div className={cx(this.classes)}>
         {this.renderDebug()}
         <ProjectView {...props}
           width={this.state.project}
@@ -289,9 +287,8 @@ class ProjectLayout extends React.Component {
 
   renderDebug() {
     return (
-      <section ref={this.container}>
-        <div
-          style={this.style}>
+      <section ref={this.container} style={this.style}>
+        <div>
           <span style={{ width: this.state.sidebar + 'px', display: 'inline-block', backgroundColor: 'orange' }}> {this.state.sidebar} {this.state.sidebarMin}-{this.state.sidebarMax}</span>
           <span style={{ width: this.state.project + 'px', display: 'inline-block', backgroundColor: 'aqua' }}> {this.state.project} {this.state.projectMin}-{this.state.projectMax}</span>
           <span style={{ width: this.state.panel + 'px', display: 'inline-block', backgroundColor: 'lightgreen' }}> {this.state.panel}</span>
