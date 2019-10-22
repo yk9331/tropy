@@ -90,6 +90,7 @@ class ProjectLayout extends React.Component {
   resize = (totalWidth) => {
     const { ui } = this.props
     let sidebarLimits = this.calculateSidebarLimits()
+    let projectLimits = this.calculateProjectLimits()
     if (this.props.isGiantViewEnabled && totalWidth > BREAKPOINT.XL) {
       let tandemWidth = totalWidth - ui.sidebar.width - ui.panel.width
       let project = Math.ceil(tandemWidth * this.state.proportion)
