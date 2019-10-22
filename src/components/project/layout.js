@@ -28,7 +28,8 @@ class ProjectLayout extends React.Component {
     const { sidebar, panel } = this.props.ui
     let proportion = 0.5
     let tandemWidth = viewport().width - sidebar.width - panel.width
-    let project = tandemWidth * proportion
+    let project = Math.ceil(tandemWidth * proportion)
+    let item = Math.floor(tandemWidth * (1 - proportion))
 
     this.state = {
       offset: panel.width,
@@ -36,7 +37,10 @@ class ProjectLayout extends React.Component {
       sidebarMin: SIDEBAR.MIN_WIDTH,
       sidebarMax: SIDEBAR.MAX_WIDTH,
       project,
+      projectMax: project,
+      projectMin: GIANT.MIN_PROJECT,
       panel: panel.width,
+      item,
       proportion,
       displayType: viewport().width > BREAKPOINT.XL ? 'giant' : 'standard',
     }
