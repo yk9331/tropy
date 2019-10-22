@@ -9,6 +9,7 @@ const { ProjectView } = require('./view')
 const { ItemView } = require('../item')
 const { bounds, viewport } = require('../../dom')
 const cx = require('classnames')
+const { Resizable } = require('../resizable')
 
 
 const actions = require('../../actions')
@@ -246,28 +247,37 @@ class ProjectLayout extends React.Component {
           onProjectDragStop={this.handleProjectDragStop}
           onMetadataSave={this.props.onMetadataSave}/>
 
-        <ItemView {...props}
-          width={this.state.item}
-          items={this.props.selection}
-          data={this.props.data}
-          activeSelection={this.props.nav.selection}
-          note={this.props.note}
-          notes={this.props.notes}
-          photo={this.props.photo}
-          photos={this.props.visiblePhotos}
-          panel={ui.panel}
-          offset={this.state.offset}
-          offset2={this.state.sidebar + this.state.project}
-          mode={this.props.mode}
-          display={ui.display}
-          displayType={this.state.displayType}
-          isModeChanging={this.props.isModeChanging}
-          isTrashSelected={!!this.props.nav.trash}
-          isProjectClosing={this.props.project.closing}
-          onPanelDragStart={this.handlePanelDragStart}
-          onPanelDrag={this.handlePanelDrag}
-          onPanelDragStop={this.handlePanelDragStop}
-          onMetadataSave={this.props.onMetadataSave}/>
+        <Resizable
+          edge="left"
+          max={1000}
+          min={1}
+          value={300}
+          onResize={this.handleProjectOnResize}
+          onDragStart={this.handleProjectDragStart}
+          onDragStop={this.handleProjectDragStop}>
+          <ItemView {...props}
+            width={this.state.item}
+            items={this.props.selection}
+            data={this.props.data}
+            activeSelection={this.props.nav.selection}
+            note={this.props.note}
+            notes={this.props.notes}
+            photo={this.props.photo}
+            photos={this.props.visiblePhotos}
+            panel={ui.panel}
+            offset={this.state.offset}
+            offset2={this.state.sidebar + this.state.project}
+            mode={this.props.mode}
+            display={ui.display}
+            displayType={this.state.displayType}
+            isModeChanging={this.props.isModeChanging}
+            isTrashSelected={!!this.props.nav.trash}
+            isProjectClosing={this.props.project.closing}
+            onPanelDragStart={this.handlePanelDragStart}
+            onPanelDrag={this.handlePanelDrag}
+            onPanelDragStop={this.handlePanelDragStop}
+            onMetadataSave={this.props.onMetadataSave}/>
+        </Resizable>
 
       </div>
     )
