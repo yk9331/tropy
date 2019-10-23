@@ -202,7 +202,6 @@ class ItemView extends React.PureComponent {
             onNoteCreate={this.handleNoteCreate}/>
         </Resizable>
         <ItemContainer
-          width={this.props.width}
           ref={this.setNotePad}
           note={this.state.note}
           photo={photo}
