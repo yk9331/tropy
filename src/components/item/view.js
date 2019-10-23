@@ -40,11 +40,9 @@ class ItemView extends React.PureComponent {
 
   get offset() {
     if (this.props.displayType === 'giant') {
-      console.log(' item display GIANT')
       return (this.isItemOpen ^ this.props.isModeChanging) ?
         0 : this.props.width + 'px'
     } else {
-      console.log(' item display STANDARD')
       return (this.isItemOpen ^ this.props.isModeChanging) ?
         0 : `calc(100% - ${this.props.offset}px)`
     }
@@ -181,7 +179,6 @@ class ItemView extends React.PureComponent {
 
     const { isItemOpen } = this
 
-    console.log('RENDERING')
     return (
       <section className="item-view">
         <Resizable
