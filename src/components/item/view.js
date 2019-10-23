@@ -50,20 +50,6 @@ class ItemView extends React.PureComponent {
     }
   }
 
-  get style() {
-    if (this.props.displayType === 'giant') {
-      let widthItemDuo = this.props.width + this.props.offset2
-      return {
-        transform: `translate3d(${this.props.offset2}px, 0, 0)`,
-        width: widthItemDuo + 'px'
-      }
-    } else {
-      return {
-        transform: `translate3d(${this.offset}, 0, 0)`
-      }
-    }
-  }
-
   get edge() {
     if (this.props.displayType === 'giant') {
       return 'right'
@@ -197,7 +183,7 @@ class ItemView extends React.PureComponent {
 
     console.log('RENDERING')
     return (
-      <section className="item-view" style={this.style}>
+      <section className="item-view">
         <Resizable
           edge={this.edge}
           value={offset}

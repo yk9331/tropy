@@ -76,7 +76,7 @@ class ProjectLayout extends React.Component {
     ]
   }
 
-  get style() {
+  get debugstyle() {
     return {
       position: 'fixed',
       bottom: '20px',
@@ -84,6 +84,21 @@ class ProjectLayout extends React.Component {
       width: '100%',
       background: 'pink',
       zIndex: 1100
+    }
+  }
+
+  get style() {
+    if (this.state.displayType === 'giant') {
+      let offset2 = this.state.sidebar + this.state.project
+      let widthItemDuo = this.state.item + offset2
+      return {
+        transform: `translate3d(${offset2}px, 0, 0)`,
+        width: widthItemDuo + 'px'
+      }
+    } else {
+      return {
+        transform: `translate3d(${this.state.offset}, 0, 0)`
+      }
     }
   }
 
@@ -261,7 +276,8 @@ class ProjectLayout extends React.Component {
           value={300}
           onResize={this.handleProjectOnResize}
           onDragStart={this.handleProjectDragStart}
-          onDragStop={this.handleProjectDragStop}>
+          onDragStop={this.handleProjectDragStop}
+          style={this.style}>
           <ItemView {...props}
             width={this.state.item}
             items={this.props.selection}
@@ -273,7 +289,6 @@ class ProjectLayout extends React.Component {
             photos={this.props.visiblePhotos}
             panel={ui.panel}
             offset={this.state.offset}
-            offset2={this.state.sidebar + this.state.project}
             mode={this.props.mode}
             display={ui.display}
             displayType={this.state.displayType}
@@ -296,7 +311,7 @@ class ProjectLayout extends React.Component {
       return { width: w, display: 'inline-block', backgroundColor: c }
     }
     return (
-      <section ref={this.container} style={this.style}>
+      <section ref={this.container} style={this.debugstyle}>
         <div>
           <span style={inlineStyle(sidebar, 'orange')}>
             {sidebar} {this.state.sidebarMin}-{this.state.sidebarMax}</span>
