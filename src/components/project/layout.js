@@ -26,8 +26,8 @@ class ProjectLayout extends React.Component {
 
   constructor(props) {
     super(props)
-    const { sidebar, panel } = this.props.ui
-    let proportion = 0.5
+    const { sidebar, panel, display } = this.props.ui
+    let proportion = display.proportion || GIANT.DEFAULT_PROPORTION
     let tandemWidth = viewport().width - sidebar.width - panel.width
     let project = Math.ceil(tandemWidth * proportion)
     let item = Math.floor(tandemWidth * (1 - proportion))
@@ -45,8 +45,6 @@ class ProjectLayout extends React.Component {
       proportion,
       displayType: viewport().width >= BREAKPOINT.XL ? 'giant' : 'standard',
     }
-
-    console.log('CONSTRUCTOR state', this.state)
   }
 
 
@@ -155,12 +153,6 @@ class ProjectLayout extends React.Component {
     })
   }
 
-  handleProjectDragStart = (ev, active) => {
-    this.projectLimits = {
-      min: active.props.min
-    }
-  }
-
   handleProjectOnResize = ({ value }) => {
     let orig = this.state.panel + this.state.item
     let delta = orig - value
@@ -172,12 +164,17 @@ class ProjectLayout extends React.Component {
       newProportion <= GIANT.MAX_PROPORTION) {
       this.setState({
         project,
-        item
+        item,
+        proportion: newProportion
       })
     }
   }
 
-  handleProjectDragStop = () => { this.projectLimits = null }
+  handleProjectDragStop = () => {
+    this.props.onUiUpdate({
+      display: { proportion: Number(this.state.proportion) }
+    })
+  }
 
   handlePanelResize = (newWidth) => {
     newWidth = Math.round(newWidth)
@@ -260,7 +257,6 @@ class ProjectLayout extends React.Component {
           min={1}
           value={this.state.panel + this.state.item}
           onResize={this.handleProjectOnResize}
-          onDragStart={this.handleProjectDragStart}
           onDragStop={this.handleProjectDragStop}
           style={this.style}>
           <ItemView {...props}
