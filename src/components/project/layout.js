@@ -164,10 +164,17 @@ class ProjectLayout extends React.Component {
   handleProjectOnResize = ({ value }) => {
     let orig = this.state.panel + this.state.item
     let delta = orig - value
-    this.setState({
-      project: this.state.project + delta,
-      item: this.state.item - delta
-    })
+    let project = this.state.project + delta
+    let item = this.state.item - delta
+    let tandem = project + item
+    let newProportion = ((tandem - item) / tandem).toFixed(GIANT.DEC_PLACES)
+    if (newProportion >= GIANT.MIN_PROPORTION &&
+      newProportion <= GIANT.MAX_PROPORTION) {
+      this.setState({
+        project,
+        item
+      })
+    }
   }
 
   handleProjectDragStop = () => { this.projectLimits = null }
