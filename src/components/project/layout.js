@@ -39,15 +39,12 @@ class ProjectLayout extends React.Component {
     }
   }
 
-
   componentDidMount() {
     this.ro = new ResizeObserver(([e]) => {
       this.handleResize(e.contentRect.width)
     })
     this.ro.observe(this.container.current)
   }
-
-
 
   componentWillUnmount() {
     this.ro.unobserve(this.container.current)
@@ -95,13 +92,11 @@ class ProjectLayout extends React.Component {
       this.setState({
         displayType: 'giant',
         project,
-        item,
-        totalWidth
+        item
       })
     } else {
       this.setState({
-        displayType: 'standard',
-        totalWidth
+        displayType: 'standard'
       })
     }
   }
