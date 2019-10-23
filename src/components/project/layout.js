@@ -8,7 +8,7 @@ const { SASS: { BREAKPOINT, GIANT,
 const { restrict } = require('../../common/util')
 const { ProjectView } = require('./view')
 const { ItemView } = require('../item')
-const { bounds, viewport } = require('../../dom')
+const { viewport } = require('../../dom')
 const cx = require('classnames')
 const { Resizable } = require('../resizable')
 
@@ -169,48 +169,24 @@ class ProjectLayout extends React.Component {
     })
   }
 
-  handlePanelResize = (newWidth) => {
-    newWidth = Math.round(newWidth)
-    let delta = this.state.offset - newWidth
+  handlePanelResize = ({ value }) => {
+    let delta = this.state.offset - value
     let item = this.state.item + delta
-    this.setState({
-      item,
-      offset: newWidth,
-      panel: newWidth
-    })
-  }
-
-  handlePanelDragStart = (ev, active) => {
-    this.panelLimits = {
-      min: active.props.min,
-      max: active.props.max }
-  }
-
-  handlePanelDrag = ({ pageX }, active) => {
-    const { min, max } = this.panelLimits
-    let delta = pageX - bounds(active.container.current).right
-    let newWidth = this.state.panel + delta
-
-    if (this.state.displayType === 'giant') {
-      this.handlePanelResize(restrict(newWidth, min, max))
-    } else {
-      switch (this.props.mode) {
-        case 'item':
-          delta = pageX - bounds(active.container.current).right
-          newWidth = this.state.panel + delta
-          this.handlePanelResize(restrict(newWidth, min, max))
-          break
-        case 'project':
-          delta = pageX - bounds(active.container.current).left
-          newWidth = this.state.panel - delta
-          this.handlePanelResize(restrict(newWidth, min, max))
-      }
+    let proportion = this.calculateProportion(this.state.project, item)
+    if (this.isProportionOk(proportion)) {
+      this.setState({
+        item,
+        offset: value,
+        panel: value,
+        proportion
+      })
     }
   }
 
   handlePanelDragStop = () => {
-    this.panelLimits = null
-    this.setState({ proportion: this.proportion })
+    this.props.onUiUpdate({
+      display: { proportion: Number(this.state.proportion) }
+    })
   }
 
   render() {
@@ -267,8 +243,7 @@ class ProjectLayout extends React.Component {
             isModeChanging={this.props.isModeChanging}
             isTrashSelected={!!this.props.nav.trash}
             isProjectClosing={this.props.project.closing}
-            onPanelDragStart={this.handlePanelDragStart}
-            onPanelDrag={this.handlePanelDrag}
+            onPanelResize={this.handlePanelResize}
             onPanelDragStop={this.handlePanelDragStop}
             onMetadataSave={this.props.onMetadataSave}/>
         </Resizable>

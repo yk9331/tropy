@@ -186,8 +186,7 @@ class ItemView extends React.PureComponent {
           value={offset}
           min={PANEL.MIN_WIDTH}
           max={PANEL.MAX_WIDTH}
-          onDragStart={this.props.onPanelDragStart}
-          onDrag={this.props.onPanelDrag}
+          onResize={this.props.onPanelResize}
           onDragStop={this.props.onPanelDragStop}>
           <ItemPanelGroup {...pick(props, ItemPanelGroup.props)}
             panel={panel}
@@ -241,8 +240,7 @@ class ItemView extends React.PureComponent {
     onNoteSave: func.isRequired,
     onNoteSelect: func.isRequired,
     onPhotoError: func.isRequired,
-    onPanelDrag: func.isRequired,
-    onPanelDragStart: func.isRequired,
+    onPanelResize: func.isRequired,
     onPanelDragStop: func.isRequired,
     onUiUpdate: func.isRequired
   }
