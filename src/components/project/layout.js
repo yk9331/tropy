@@ -269,9 +269,9 @@ class ProjectLayout extends React.Component {
 
         <Resizable
           edge="left"
-          max={1000}
+          max={3000}
           min={1}
-          value={300}
+          value={this.state.panel + this.state.item}
           onResize={this.handleProjectOnResize}
           onDragStart={this.handleProjectDragStart}
           onDragStop={this.handleProjectDragStop}
