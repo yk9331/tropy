@@ -241,8 +241,7 @@ class ProjectLayout extends React.Component {
     } = this.props
 
     return (
-      <div className={cx(this.classes)}>
-        {this.renderDebug()}
+      <div className={cx(this.classes)} ref={this.container}>
         <ProjectView {...props}
           width={this.state.project}
           nav={this.props.nav}
@@ -299,29 +298,6 @@ class ProjectLayout extends React.Component {
         </Resizable>
 
       </div>
-    )
-  }
-
-  renderDebug() {
-    const { sidebar, project, panel, item } = this.state
-    function inlineStyle(w, c) {
-      return { width: w, display: 'inline-block', backgroundColor: c }
-    }
-    return (
-      <section ref={this.container} style={this.debugstyle}>
-        <div>
-          <span style={inlineStyle(sidebar, 'orange')}>
-            {sidebar} {this.state.sidebarMin}-{this.state.sidebarMax}</span>
-          <span style={inlineStyle(project, 'aqua')}>
-            {project} {this.state.projectMin}-{this.state.projectMax}</span>
-          <span style={inlineStyle(panel, 'lightgreen')}>
-            {panel} {this.state.panelMin}-{this.state.panelMax}</span>
-          <span style={inlineStyle(item, 'gray')}>
-            {item} {this.state.itemMin}-{this.state.itemMax}</span>
-          <div>{this.state.proportion} {this.props.ui.display.proportion}
-            {this.state.displayType}</div>
-        </div>
-      </section>
     )
   }
 
