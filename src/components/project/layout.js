@@ -3,18 +3,13 @@
 const React = require('react')
 const { connect } = require('react-redux')
 const throttle = require('lodash.throttle')
-const { restrict } = require('../../common/util')
 const { SASS: { BREAKPOINT, GIANT } } = require('../../constants')
 const { ProjectView } = require('./view')
 const { ItemView } = require('../item')
 const { viewport } = require('../../dom')
 const cx = require('classnames')
 const { Resizable } = require('../resizable')
-
-
 const actions = require('../../actions')
-
-
 const {
   arrayOf, object, bool, func, array, shape, number, string
 } = require('prop-types')
@@ -80,11 +75,12 @@ class ProjectLayout extends React.Component {
     }
   }
 
-  get proportion() {
-    const { totalWidth, sidebar, panel, item } = this.state
-    let tandemWidth = totalWidth  - sidebar - panel
-    return ((tandemWidth - item) / tandemWidth).toFixed(GIANT.DEC_PLACES)
+  calculateProportion = (project, item) => {
+    let tandem = project + item
+    return Number(((tandem - item) / tandem).toFixed(GIANT.DEC_PLACES))
   }
+
+  isProportionOk = (p) => p >= GIANT.MIN_PROPORTION && p <= GIANT.MAX_PROPORTION
 
   handleResize = throttle((width) => {
     this.resize(width)
@@ -108,24 +104,7 @@ class ProjectLayout extends React.Component {
         totalWidth
       })
     }
-
   }
-
-  calculateSidebarLimits = () => {
-    let project = (this.state.sidebar + this.state.project) - GIANT.MIN_PROJECT
-    return {
-      max: restrict(project, SIDEBAR.MIN_WIDTH, SIDEBAR.MAX_WIDTH),
-      min: SIDEBAR.MIN_WIDTH
-    }
-  }
-
-  calculateProportion = (project, item) => {
-    let tandem = project + item
-    return Number(((tandem - item) / tandem).toFixed(GIANT.DEC_PLACES))
-  }
-
-  isProportionOk = (p) => p >= GIANT.MIN_PROPORTION && p <= GIANT.MAX_PROPORTION
-
 
   handleSidebarOnResize = ({ value }) => {
     let delta = this.state.sidebar - value
@@ -140,13 +119,6 @@ class ProjectLayout extends React.Component {
     }
   }
 
-  handleSidebarDragStop = () => {
-    this.props.onUiUpdate({
-      sidebar: { width: this.state.sidebar },
-      display: { proportion: Number(this.state.proportion) }
-    })
-  }
-
   handleProjectOnResize = ({ value }) => {
     let orig = this.state.panel + this.state.item
     let delta = orig - value
@@ -157,15 +129,9 @@ class ProjectLayout extends React.Component {
       this.setState({
         project,
         item,
-        proportion: proportion
+        proportion
       })
     }
-  }
-
-  handleProjectDragStop = () => {
-    this.props.onUiUpdate({
-      display: { proportion: Number(this.state.proportion) }
-    })
   }
 
   handlePanelResize = ({ value }) => {
@@ -180,6 +146,19 @@ class ProjectLayout extends React.Component {
         proportion
       })
     }
+  }
+
+  handleSidebarDragStop = () => {
+    this.props.onUiUpdate({
+      sidebar: { width: this.state.sidebar },
+      display: { proportion: Number(this.state.proportion) }
+    })
+  }
+
+  handleProjectDragStop = () => {
+    this.props.onUiUpdate({
+      display: { proportion: Number(this.state.proportion) }
+    })
   }
 
   handlePanelDragStop = () => {
@@ -217,8 +196,6 @@ class ProjectLayout extends React.Component {
 
         <Resizable
           edge="left"
-          max={3000}
-          min={1}
           value={this.state.panel + this.state.item}
           onResize={this.handleProjectOnResize}
           onDragStop={this.handleProjectDragStop}
@@ -244,7 +221,6 @@ class ProjectLayout extends React.Component {
             onPanelDragStop={this.handlePanelDragStop}
             onMetadataSave={this.props.onMetadataSave}/>
         </Resizable>
-
       </div>
     )
   }
@@ -268,8 +244,6 @@ class ProjectLayout extends React.Component {
     onItemTagAdd: func.isRequired,
     onSearch: func.isRequired,
     onSort: func.isRequired,
-
-
     project: object.isRequired,
     selection: arrayOf(
       shape({ id: number.isRequired })
