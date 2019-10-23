@@ -293,7 +293,7 @@ class ProjectLayout extends React.Component {
   renderDebug() {
     const { sidebar, project, panel, item } = this.state
     function inlineStyle(w, c) {
-      return { width: w + 'px', display: 'inline-block', backgroundColor: c }
+      return { width: w, display: 'inline-block', backgroundColor: c }
     }
     return (
       <section ref={this.container} style={this.style}>

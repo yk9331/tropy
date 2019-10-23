@@ -54,7 +54,7 @@ class ItemContainer extends React.PureComponent {
         width: `${this.props.width}px`
       }
     }
-    return {}
+    return null
   }
 
   getResizableProps(layout = this.props.settings.layout) {
