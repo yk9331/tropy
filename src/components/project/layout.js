@@ -4,7 +4,7 @@ const React = require('react')
 const { connect } = require('react-redux')
 const throttle = require('lodash.throttle')
 const { SASS: { BREAKPOINT, GIANT,
-  SIDEBAR, PANEL } } = require('../../constants')
+  SIDEBAR } } = require('../../constants')
 const { restrict } = require('../../common/util')
 const { ProjectView } = require('./view')
 const { ItemView } = require('../item')
@@ -35,14 +35,10 @@ class ProjectLayout extends React.Component {
     this.state = {
       offset: panel.width,
       sidebar: sidebar.width,
-      sidebarMin: SIDEBAR.MIN_WIDTH,
-      sidebarMax: SIDEBAR.MAX_WIDTH,
       project,
       projectMax: project,
       projectMin: GIANT.MIN_PROJECT,
       panel: panel.width,
-      panelMax: PANEL.MAX_WIDTH,
-      panelMin: PANEL.MIN_WIDTH,
       item,
       itemMax: 0,
       itemMin: 0,
@@ -76,17 +72,6 @@ class ProjectLayout extends React.Component {
     ]
   }
 
-  get debugstyle() {
-    return {
-      position: 'fixed',
-      bottom: '20px',
-      right: '0px',
-      width: '100%',
-      background: 'pink',
-      zIndex: 1100
-    }
-  }
-
   get style() {
     if (this.state.displayType === 'giant') {
       let offset2 = this.state.sidebar + this.state.project
@@ -112,7 +97,6 @@ class ProjectLayout extends React.Component {
 
   resize = (totalWidth) => {
     const { ui } = this.props
-    let sidebarLimits = this.calculateSidebarLimits()
     let projectLimits = this.calculateProjectLimits()
     if (this.props.isGiantViewEnabled && totalWidth >= BREAKPOINT.XL) {
       let tandemWidth = totalWidth - ui.sidebar.width - ui.panel.width
@@ -123,8 +107,6 @@ class ProjectLayout extends React.Component {
         project,
         item,
         totalWidth,
-        sidebarMax: sidebarLimits.max,
-        sidebarMin: sidebarLimits.min,
         projectMax: projectLimits.max,
         projectMin: projectLimits.min
       })
@@ -255,8 +237,8 @@ class ProjectLayout extends React.Component {
           projectMax={this.state.projectMax}
           projectMin={this.state.projectMin}
           templates={this.props.templates}
-          sidebarMax={this.state.sidebarMax}
-          sidebarMin={this.state.sidebarMin}
+          sidebarMax={SIDEBAR.MAX_WIDTH}
+          sidebarMin={SIDEBAR.MIN_WIDTH}
           zoom={ui.zoom}
           display={ui.display}
           displayType={this.state.displayType}
