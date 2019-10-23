@@ -276,7 +276,6 @@ class ProjectLayout extends React.Component {
           onDragStart={this.handleProjectDragStart}
           onDragStop={this.handleProjectDragStop}
           style={this.style}>
-          <div id='roberto' style={this.style}/>
           <ItemView {...props}
             width={this.state.item}
             items={this.props.selection}
