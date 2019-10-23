@@ -47,7 +47,7 @@ class ProjectLayout extends React.Component {
       itemMax: 0,
       itemMin: 0,
       proportion,
-      displayType: viewport().width > BREAKPOINT.XL ? 'giant' : 'standard',
+      displayType: viewport().width >= BREAKPOINT.XL ? 'giant' : 'standard',
     }
 
     console.log('CONSTRUCTOR state', this.state)
@@ -101,7 +101,7 @@ class ProjectLayout extends React.Component {
     const { ui } = this.props
     let sidebarLimits = this.calculateSidebarLimits()
     let projectLimits = this.calculateProjectLimits()
-    if (this.props.isGiantViewEnabled && totalWidth > BREAKPOINT.XL) {
+    if (this.props.isGiantViewEnabled && totalWidth >= BREAKPOINT.XL) {
       let tandemWidth = totalWidth - ui.sidebar.width - ui.panel.width
       let project = Math.ceil(tandemWidth * this.state.proportion)
       let item = Math.floor(tandemWidth * (1 - this.state.proportion))
