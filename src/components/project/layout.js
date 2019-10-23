@@ -180,9 +180,11 @@ class ProjectLayout extends React.Component {
   }
 
   handleProjectOnResize = ({ value }) => {
+    let orig = this.state.panel + this.state.item
+    let delta = orig - value
     this.setState({
-      project: value,
-      item: this.state.item + (this.state.project - value)
+      project: this.state.project + delta,
+      item: this.state.item - delta
     })
   }
 
@@ -262,9 +264,6 @@ class ProjectLayout extends React.Component {
           onSidebarResize={this.handleSidebarOnResize}
           onSidebarDragStart={this.handleSidebarDragStart}
           onSidebarDragStop={this.handleSidebarDragStop}
-          onProjectDragStart={this.handleProjectDragStart}
-          onProjectResize={this.handleProjectOnResize}
-          onProjectDragStop={this.handleProjectDragStop}
           onMetadataSave={this.props.onMetadataSave}/>
 
         <Resizable
