@@ -163,6 +163,7 @@ class ProjectLayout extends React.Component {
 
   handlePanelDragStop = () => {
     this.props.onUiUpdate({
+      panel: { width: this.state.panel },
       display: { proportion: Number(this.state.proportion) }
     })
   }
