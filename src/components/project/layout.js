@@ -101,7 +101,7 @@ class ProjectLayout extends React.Component {
         displayType: 'giant',
         project,
         item,
-        totalWidth,
+        totalWidth
       })
     } else {
       this.setState({
@@ -120,13 +120,25 @@ class ProjectLayout extends React.Component {
     }
   }
 
+  calculateProportion = (project, item) => {
+    let tandem = project + item
+    return Number(((tandem - item) / tandem).toFixed(GIANT.DEC_PLACES))
   }
 
+  isProportionOk = (p) => p >= GIANT.MIN_PROPORTION && p <= GIANT.MAX_PROPORTION
+
+
   handleSidebarOnResize = ({ value }) => {
-    this.setState({
-      sidebar: value,
-      project: this.state.project + this.state.sidebar - value
-    })
+    let delta = this.state.sidebar - value
+    let project = this.state.project + delta
+    let proportion = this.calculateProportion(project, this.state.item)
+    if (this.isProportionOk(proportion)) {
+      this.setState({
+        sidebar: value,
+        project,
+        proportion
+      })
+    }
   }
 
   handleSidebarDragStop = () => {
@@ -141,14 +153,12 @@ class ProjectLayout extends React.Component {
     let delta = orig - value
     let project = this.state.project + delta
     let item = this.state.item - delta
-    let tandem = project + item
-    let newProportion = ((tandem - item) / tandem).toFixed(GIANT.DEC_PLACES)
-    if (newProportion >= GIANT.MIN_PROPORTION &&
-      newProportion <= GIANT.MAX_PROPORTION) {
+    let proportion = this.calculateProportion(project, item)
+    if (this.isProportionOk(proportion)) {
       this.setState({
         project,
         item,
-        proportion: newProportion
+        proportion: proportion
       })
     }
   }
@@ -224,6 +234,7 @@ class ProjectLayout extends React.Component {
           templates={this.props.templates}
           sidebarMax={SIDEBAR.MAX_WIDTH}
           sidebarMin={SIDEBAR.MIN_WIDTH}
+          sidebarWidth={this.state.sidebar}
           zoom={ui.zoom}
           display={ui.display}
           displayType={this.state.displayType}

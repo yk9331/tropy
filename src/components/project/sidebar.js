@@ -235,10 +235,9 @@ class ProjectSidebar extends React.PureComponent {
     return (
       <Resizable
         edge="right"
-        isBuffered
         min={this.props.sidebarMin}
         max={this.props.sidebarMax}
-        value={this.props.width}
+        value={this.props.sidebarWidth}
         onResize={this.props.onSidebarResize}
         onDragStop={this.props.onSidebarDragStop}>
         <Sidebar>
@@ -341,6 +340,7 @@ class ProjectSidebar extends React.PureComponent {
       items: number
     }).isRequired,
     root: number.isRequired,
+    sidebarWidth: number.isRequired,
     sidebarMax: number.isRequired,
     sidebarMin: number.isRequired,
     tagColor: string,
