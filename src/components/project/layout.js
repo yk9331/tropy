@@ -36,8 +36,6 @@ class ProjectLayout extends React.Component {
       offset: panel.width,
       sidebar: sidebar.width,
       project,
-      projectMax: project,
-      projectMin: GIANT.MIN_PROJECT,
       panel: panel.width,
       item,
       itemMax: 0,
@@ -95,7 +93,6 @@ class ProjectLayout extends React.Component {
 
   resize = (totalWidth) => {
     const { ui } = this.props
-    let projectLimits = this.calculateProjectLimits()
     if (this.props.isGiantViewEnabled && totalWidth >= BREAKPOINT.XL) {
       let tandemWidth = totalWidth - ui.sidebar.width - ui.panel.width
       let project = Math.ceil(tandemWidth * this.state.proportion)
@@ -105,8 +102,6 @@ class ProjectLayout extends React.Component {
         project,
         item,
         totalWidth,
-        projectMax: projectLimits.max,
-        projectMin: projectLimits.min
       })
     } else {
       this.setState({
@@ -125,12 +120,6 @@ class ProjectLayout extends React.Component {
     }
   }
 
-  calculateProjectLimits = () => {
-    let duo = this.state.project + this.state.item
-    return {
-      max: duo - GIANT.MIN_ITEM,
-      min: GIANT.MIN_PROJECT
-    }
   }
 
   handleSidebarOnResize = ({ value }) => {
@@ -144,12 +133,6 @@ class ProjectLayout extends React.Component {
     this.props.onUiUpdate({
       sidebar: { width: this.state.sidebar },
       display: { proportion: Number(this.state.proportion) }
-    })
-  }
-
-  handleSidebarDragStart = () => {
-    this.setState({
-      projectMax: this.state.project + (this.state.sidebar - SIDEBAR.MIN_WIDTH)
     })
   }
 
@@ -238,8 +221,6 @@ class ProjectLayout extends React.Component {
           columns={this.props.columns}
           offset={this.state.offset}
           photos={this.props.photos}
-          projectMax={this.state.projectMax}
-          projectMin={this.state.projectMin}
           templates={this.props.templates}
           sidebarMax={SIDEBAR.MAX_WIDTH}
           sidebarMin={SIDEBAR.MIN_WIDTH}
@@ -247,7 +228,6 @@ class ProjectLayout extends React.Component {
           display={ui.display}
           displayType={this.state.displayType}
           onSidebarResize={this.handleSidebarOnResize}
-          onSidebarDragStart={this.handleSidebarDragStart}
           onSidebarDragStop={this.handleSidebarDragStop}
           onMetadataSave={this.props.onMetadataSave}/>
 

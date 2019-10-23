@@ -129,8 +129,6 @@ class ProjectView extends React.Component {
     nav: object.isRequired,
     offset: number.isRequired,
     photos: object.isRequired,
-    projectMax: number.isRequired,
-    projectMin: number.isRequired,
     tags: object.isRequired,
     dt: func.isRequired,
     displayType: string.isRequired,
