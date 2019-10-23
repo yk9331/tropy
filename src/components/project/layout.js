@@ -3,9 +3,8 @@
 const React = require('react')
 const { connect } = require('react-redux')
 const throttle = require('lodash.throttle')
-const { SASS: { BREAKPOINT, GIANT,
-  SIDEBAR } } = require('../../constants')
 const { restrict } = require('../../common/util')
+const { SASS: { BREAKPOINT, GIANT } } = require('../../constants')
 const { ProjectView } = require('./view')
 const { ItemView } = require('../item')
 const { viewport } = require('../../dom')
@@ -208,8 +207,6 @@ class ProjectLayout extends React.Component {
           offset={this.state.offset}
           photos={this.props.photos}
           templates={this.props.templates}
-          sidebarMax={SIDEBAR.MAX_WIDTH}
-          sidebarMin={SIDEBAR.MIN_WIDTH}
           sidebarWidth={this.state.sidebar}
           zoom={ui.zoom}
           display={ui.display}
