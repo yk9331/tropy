@@ -90,10 +90,8 @@ class ProjectLayout extends React.Component {
   get style() {
     if (this.state.displayType === 'giant') {
       let offset2 = this.state.sidebar + this.state.project
-      let widthItemDuo = this.state.item + offset2
       return {
         transform: `translate3d(${offset2}px, 0, 0)`,
-        width: widthItemDuo + 'px'
       }
     } else {
       return {
@@ -278,6 +276,7 @@ class ProjectLayout extends React.Component {
           onDragStart={this.handleProjectDragStart}
           onDragStop={this.handleProjectDragStop}
           style={this.style}>
+          <div id='roberto' style={this.style}/>
           <ItemView {...props}
             width={this.state.item}
             items={this.props.selection}

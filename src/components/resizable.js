@@ -1,7 +1,8 @@
 'use strict'
 
 const React = require('react')
-const { func, node, bool, number, oneOf, string } = require('prop-types')
+const { func, node, bool, number, oneOf,
+  string, object } = require('prop-types')
 const { Draggable } = require('./draggable')
 const cx = require('classnames')
 const { bounds } = require('../dom')
@@ -78,6 +79,7 @@ class Resizable extends React.Component {
   get style() {
     let { cssValue, cssMax, cssMin, dimension } = this
     return {
+      ...this.props.style,
       [dimension]: cssValue,
       [`min${capitalize(dimension)}`]: cssMin,
       [`max${capitalize(dimension)}`]: cssMax
@@ -218,6 +220,7 @@ class Resizable extends React.Component {
     onDrag: func,
     onDragStart: func,
     onDragStop: func,
+    style: object
   }
 
   static defaultProps = {
