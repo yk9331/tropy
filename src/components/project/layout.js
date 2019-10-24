@@ -10,6 +10,8 @@ const { viewport } = require('../../dom')
 const cx = require('classnames')
 const { Resizable } = require('../resizable')
 const actions = require('../../actions')
+const { round } = require('../../common/math')
+
 const {
   arrayOf, object, bool, func, array, shape, number, string
 } = require('prop-types')
@@ -74,7 +76,7 @@ class ProjectLayout extends React.Component {
 
   calculateProportion = (project, item) => {
     let tandem = project + item
-    return Number(((tandem - item) / tandem).toFixed(GIANT.DEC_PLACES))
+    return round((tandem - item) / tandem, GIANT.DEC_PRECISION)
   }
 
   isProportionOk = (p) => p >= GIANT.MIN_PROPORTION && p <= GIANT.MAX_PROPORTION
@@ -146,20 +148,20 @@ class ProjectLayout extends React.Component {
   handleSidebarDragStop = () => {
     this.props.onUiUpdate({
       sidebar: { width: this.state.sidebar },
-      display: { proportion: Number(this.state.proportion) }
+      display: { proportion: this.state.proportion }
     })
   }
 
   handleProjectDragStop = () => {
     this.props.onUiUpdate({
-      display: { proportion: Number(this.state.proportion) }
+      display: { proportion: this.state.proportion }
     })
   }
 
   handlePanelDragStop = () => {
     this.props.onUiUpdate({
       panel: { width: this.state.panel },
-      display: { proportion: Number(this.state.proportion) }
+      display: { proportion: this.state.proportion }
     })
   }
 
