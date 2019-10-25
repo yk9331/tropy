@@ -120,12 +120,10 @@ class Resizable extends React.Component {
   getNewValue(event) {
     let { edge, min, isRelative } = this.props
     let { isInverse, origin, scale, max } = this
+    let unrestrictedValue = (event[AXS[edge]] - origin) * (isInverse ? -1 : 1)
+    let value = restrict(unrestrictedValue, min, max)
 
-    let value = restrict(
-      (event[AXS[edge]] - origin) * (isInverse ? -1 : 1), min, max
-    )
-
-    return (!isRelative) ? { value } : {
+    return (!isRelative) ? { value, unrestrictedValue } : {
       absolute: value,
       value: restrict(round(value / scale, 100), null, 100)
     }

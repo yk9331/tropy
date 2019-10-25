@@ -131,7 +131,7 @@ class ProjectLayout extends React.Component {
     }
   }
 
-  handlePanelResize = ({ value }) => {
+  resizePanel= (value) => {
     let delta = this.state.offset - value
     let item = this.state.item + delta
     let proportion = this.calculateProportion(this.state.project, item)
@@ -145,6 +145,46 @@ class ProjectLayout extends React.Component {
     }
   }
 
+
+  handlePanelResize = ({ value, unrestrictedValue }) => {
+    let deltaMove = unrestrictedValue - value
+    if (deltaMove !== 0) {
+      if (deltaMove !== this.deltaMove) {
+        let x =  this.deltaMove - deltaMove
+        if (value === this.panelDrag.min && x < 0) {
+          this.dragAction = 'resize out'
+          this.deltaMove = deltaMove
+          this.resizePanel(this.state.panel - x)
+
+        } else {
+          this.dragAction = 'move'
+          let project = this.state.project - x
+          let item = this.state.item + x
+          let proportion = this.calculateProportion(project, item)
+          this.deltaMove = deltaMove
+          this.setState({
+            project,
+            item,
+            proportion
+          })
+        }
+      }
+    } else {
+      if (this.dragAction === 'resize out') {
+        if (this.prevDrag !== value) {
+          let offset = this.state.project - this.panelDrag.orig
+          this.resizePanel(value - offset)
+          this.prevDrag = value
+        }
+      } else {
+        if (value !== this.state.panel) {
+          this.dragAction = 'resize in'
+          this.resizePanel(value)
+        }
+      }
+    }
+  }
+
   handleSidebarDragStop = () => {
     this.props.onUiUpdate({
       sidebar: { width: this.state.sidebar },
@@ -153,9 +193,22 @@ class ProjectLayout extends React.Component {
   }
 
   handleProjectDragStop = () => {
+    this.panelDrag = null
     this.props.onUiUpdate({
       display: { proportion: this.state.proportion }
     })
+  }
+
+  handlePanelDragStart = (event, active) => {
+    this.deltaMove = 0
+    this.dragAction = null
+    this.prevDrag = null
+    this.direction = null
+    this.panelDrag = {
+      min: active.props.min,
+      max: active.props.max,
+      orig: this.state.project
+    }
   }
 
   handlePanelDragStop = () => {
@@ -215,6 +268,7 @@ class ProjectLayout extends React.Component {
             isModeChanging={this.props.isModeChanging}
             isTrashSelected={!!this.props.nav.trash}
             isProjectClosing={this.props.project.closing}
+            onPanelDragStart={this.handlePanelDragStart}
             onPanelResize={this.handlePanelResize}
             onPanelDragStop={this.handlePanelDragStop}
             onMetadataSave={this.props.onMetadataSave}/>
