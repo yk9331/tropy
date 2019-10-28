@@ -74,7 +74,7 @@ class ProjectLayout extends React.Component {
     }
   }
 
-  calculateProportion = (project, item) => {
+  calcProportion = (project, item) => {
     let tandem = project + item
     return round((tandem - item) / tandem, GIANT.DEC_PRECISION)
   }
@@ -103,48 +103,35 @@ class ProjectLayout extends React.Component {
     }
   }
 
-  handleSidebarOnResize = ({ value }) => {
-    let delta = this.state.sidebar - value
-    let project = this.state.project + delta
-    let proportion = this.calculateProportion(project, this.state.item)
-    if (this.isProportionOk(proportion)) {
-      this.setState({
-        sidebar: value,
-        project,
-        proportion
-      })
+  resizePortion = (portion, value, counterPortion) => {
+    console.log('resize portion', portion, value,)
+    const { item } = this.state
+    var delta = this.state[portion] - value
+
+    var newState = {
+      [portion]: value,
+      [counterPortion]: this.state[counterPortion] + delta,
+      proportion: this.calcProportion(this.state[counterPortion] + delta, item)
     }
+
+    if (portion === 'panel') {
+      newState.offset = value
+    }
+
+    if (this.isProportionOk(newState.proportion)) {
+      this.setState(newState)
+    }
+  }
+
+  handleSidebarOnResize = ({ value }) => {
+    this.resizePortion('sidebar', value, 'project')
   }
 
   handleProjectOnResize = ({ value }) => {
     let orig = this.state.panel + this.state.item
     let delta = orig - value
-    let project = this.state.project + delta
-    let item = this.state.item - delta
-    let proportion = this.calculateProportion(project, item)
-    if (this.isProportionOk(proportion)) {
-      this.setState({
-        project,
-        item,
-        proportion
-      })
-    }
+    this.resizePortion('project', this.state.project + delta, 'item')
   }
-
-  resizePanel= (value) => {
-    let delta = this.state.offset - value
-    let item = this.state.item + delta
-    let proportion = this.calculateProportion(this.state.project, item)
-    if (this.isProportionOk(proportion)) {
-      this.setState({
-        item,
-        offset: value,
-        panel: value,
-        proportion
-      })
-    }
-  }
-
 
   handlePanelResize = ({ value, unrestrictedValue }) => {
     let deltaMove = unrestrictedValue - value
@@ -154,13 +141,13 @@ class ProjectLayout extends React.Component {
         if (value === this.panelDrag.min && x < 0) {
           this.dragAction = 'resize out'
           this.deltaMove = deltaMove
-          this.resizePanel(this.state.panel - x)
+          this.resizePortion('panel', this.state.panel - x, 'item')
 
         } else {
           this.dragAction = 'move'
           let project = this.state.project - x
           let item = this.state.item + x
-          let proportion = this.calculateProportion(project, item)
+          let proportion = this.calcProportion(project, item)
           this.deltaMove = deltaMove
           this.setState({
             project,
@@ -173,13 +160,13 @@ class ProjectLayout extends React.Component {
       if (this.dragAction === 'resize out') {
         if (this.prevDrag !== value) {
           let offset = this.state.project - this.panelDrag.orig
-          this.resizePanel(value - offset)
+          this.resizePortion('panel', value - offset, 'item')
           this.prevDrag = value
         }
       } else {
         if (value !== this.state.panel) {
           this.dragAction = 'resize in'
-          this.resizePanel(value)
+          this.resizePortion('panel', value, 'item')
         }
       }
     }
