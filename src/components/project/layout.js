@@ -3,7 +3,8 @@
 const React = require('react')
 const { connect } = require('react-redux')
 const throttle = require('lodash.throttle')
-const { SASS: { BREAKPOINT, GIANT } } = require('../../constants')
+const { restrict } = require('../../common/util')
+const { SASS: { BREAKPOINT, GIANT, PANEL } } = require('../../constants')
 const { ProjectView } = require('./view')
 const { ItemView } = require('../item')
 const { viewport } = require('../../dom')
@@ -103,8 +104,7 @@ class ProjectLayout extends React.Component {
     }
   }
 
-  resizePortion = (portion, value) => {
-    console.log('resize portion', portion, value,)
+  resizePortion = (portion, value, explicit = false) => {
     const { item } = this.state
     let counterP = {
       sidebar: 'project',
@@ -113,11 +113,16 @@ class ProjectLayout extends React.Component {
 
     }
     let delta = this.state[portion] - value
+    let counter = counterP[portion]
+    if (explicit) {
+      counter = explicit
+    }
 
     let newState = {
       [portion]: value,
-      [counterP[portion]]: this.state[counterP[portion]] + delta,
-      proportion: this.calcProportion(this.state[counterP[portion]] + delta, item)
+      [counter]: this.state[counter] + delta,
+      proportion: this.calcProportion(
+        this.state[counter] + delta, item)
     }
 
     if (portion === 'panel') {
@@ -134,39 +139,39 @@ class ProjectLayout extends React.Component {
   }
 
   handleProjectOnResize = ({ value }) => {
-    let orig = this.state.panel + this.state.item
-    let delta = orig - value
-    this.resizePortion('project', this.state.project + delta)
+    const max = PANEL.MAX_WIDTH + this.state.item
+    const min = PANEL.MIN_WIDTH + this.state.item
+    if (value > min && value < max) {
+      let size = value - this.state.item
+      this.resizePortion('panel', size, 'project')
+    } else {
+      // let delta = this.getOutDelta(value, max, min)
+      // if (this.deltaMove !== delta) {
+      //   let x =  this.deltaMove - delta
+      //   this.deltaMove = delta
+      //   this.resizePortion('project', this.state.project + x)
+      // }
+    }
   }
 
-  handlePanelResize = ({ value, unrestrictedValue }) => {
-    let deltaMove = unrestrictedValue - value
-    if (deltaMove !== 0) {
-      if (deltaMove !== this.deltaMove) {
-        let x =  this.deltaMove - deltaMove
-        if (value === this.panelDrag.min && x < 0) {
-          this.dragAction = 'resize out'
-          this.deltaMove = deltaMove
-          this.resizePortion('panel', this.state.panel - x)
+  getOutDelta = (value, max, min) => {
+    if (value > max) {
+      return max - value
+    }
+    return min - value
+  }
 
-        } else {
-          this.dragAction = 'move'
-          this.deltaMove = deltaMove
-          this.resizePortion('project', this.state.project - x)
-        }
-      }
+  handlePanelResize = ({ value }) => {
+    const max = PANEL.MAX_WIDTH
+    const min = PANEL.MIN_WIDTH
+    if (value > min && value < max) {
+      this.resizePortion('panel', restrict(value, min, max))
     } else {
-      if (this.dragAction === 'resize out') {
-        if (this.prevDrag !== value) {
-          let offset = this.state.project - this.panelDrag.orig
-          this.resizePortion('panel', value - offset)
-          this.prevDrag = value
-        }
-      } else {
-        if (value !== this.state.panel) {
-          this.dragAction = 'resize in'
-          this.resizePortion('panel', value)
-        }
+      let delta = this.getOutDelta(value, max, min)
+      if (this.deltaMove !== delta) {
+        let x =  this.deltaMove - delta
+        this.deltaMove = delta
+        this.resizePortion('project', this.state.project + x)
       }
     }
   }
@@ -198,6 +203,7 @@ class ProjectLayout extends React.Component {
   }
 
   handlePanelDragStop = () => {
+    this.deltaMove = 0
     this.props.onUiUpdate({
       panel: { width: this.state.panel },
       display: { proportion: this.state.proportion }
