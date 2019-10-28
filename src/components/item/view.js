@@ -184,8 +184,6 @@ class ItemView extends React.PureComponent {
         <Resizable
           edge={this.edge}
           value={offset}
-          min={PANEL.MIN_WIDTH}
-          max={PANEL.MAX_WIDTH}
           onDragStart={this.props.onPanelDragStart}
           onResize={this.props.onPanelResize}
           onDragStop={this.props.onPanelDragStop}>
