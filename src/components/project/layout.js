@@ -103,15 +103,21 @@ class ProjectLayout extends React.Component {
     }
   }
 
-  resizePortion = (portion, value, counterPortion) => {
+  resizePortion = (portion, value) => {
     console.log('resize portion', portion, value,)
     const { item } = this.state
-    var delta = this.state[portion] - value
+    let counterP = {
+      sidebar: 'project',
+      project: 'item',
+      panel: 'item',
 
-    var newState = {
+    }
+    let delta = this.state[portion] - value
+
+    let newState = {
       [portion]: value,
-      [counterPortion]: this.state[counterPortion] + delta,
-      proportion: this.calcProportion(this.state[counterPortion] + delta, item)
+      [counterP[portion]]: this.state[counterP[portion]] + delta,
+      proportion: this.calcProportion(this.state[counterP[portion]] + delta, item)
     }
 
     if (portion === 'panel') {
@@ -124,13 +130,13 @@ class ProjectLayout extends React.Component {
   }
 
   handleSidebarOnResize = ({ value }) => {
-    this.resizePortion('sidebar', value, 'project')
+    this.resizePortion('sidebar', value)
   }
 
   handleProjectOnResize = ({ value }) => {
     let orig = this.state.panel + this.state.item
     let delta = orig - value
-    this.resizePortion('project', this.state.project + delta, 'item')
+    this.resizePortion('project', this.state.project + delta)
   }
 
   handlePanelResize = ({ value, unrestrictedValue }) => {
@@ -141,32 +147,25 @@ class ProjectLayout extends React.Component {
         if (value === this.panelDrag.min && x < 0) {
           this.dragAction = 'resize out'
           this.deltaMove = deltaMove
-          this.resizePortion('panel', this.state.panel - x, 'item')
+          this.resizePortion('panel', this.state.panel - x)
 
         } else {
           this.dragAction = 'move'
-          let project = this.state.project - x
-          let item = this.state.item + x
-          let proportion = this.calcProportion(project, item)
           this.deltaMove = deltaMove
-          this.setState({
-            project,
-            item,
-            proportion
-          })
+          this.resizePortion('project', this.state.project - x)
         }
       }
     } else {
       if (this.dragAction === 'resize out') {
         if (this.prevDrag !== value) {
           let offset = this.state.project - this.panelDrag.orig
-          this.resizePortion('panel', value - offset, 'item')
+          this.resizePortion('panel', value - offset)
           this.prevDrag = value
         }
       } else {
         if (value !== this.state.panel) {
           this.dragAction = 'resize in'
-          this.resizePortion('panel', value, 'item')
+          this.resizePortion('panel', value)
         }
       }
     }
