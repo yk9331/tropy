@@ -105,7 +105,6 @@ class ProjectLayout extends React.Component {
   }
 
   resizePortion = (portion, value, explicit = false) => {
-    const { item } = this.state
     let counterP = {
       sidebar: 'project',
       project: 'item',
@@ -136,40 +135,48 @@ class ProjectLayout extends React.Component {
     this.resizePortion('sidebar', value)
   }
 
+  getDelta = (value) => {
+    if (this.drag.prev !== value)
+      return value - this.drag.prev
+    return 0
+  }
+
   handleProjectOnResize = ({ value }) => {
     const max = PANEL.MAX_WIDTH + this.drag.startItem
     const min = PANEL.MIN_WIDTH + this.drag.startItem
-    if (value > min && value < max) {
-      let size = value - this.state.item
-      this.resizePortion('panel', size, 'project')
-    } else {
-      let delta = this.getOutDelta(value, max, min)
-      if (this.drag.deltaMove !== delta) {
-        this.drag.deltaMove = delta
-        this.resizePortion('project', this.drag.startProject + delta)
-      }
-    }
-  }
+    let delta = this.getDelta(value)
 
-  getOutDelta = (value, max, min) => {
-    if (value > max) {
-      return max - value
-    }
-    return min - value
+    if (value > min && value < max)
+      this.resizePortion('panel', this.state.panel + delta, 'project')
+    else
+      this.resizePortion('project', this.state.project - delta)
+
+    this.drag.prev = value
   }
 
   handlePanelResize = ({ value }) => {
     const max = PANEL.MAX_WIDTH
     const min = PANEL.MIN_WIDTH
-    if (value > min && value < max) {
-      this.resizePortion('panel', restrict(value, min, max))
-    } else {
-      let delta = this.getOutDelta(value, max, min)
-      if (this.deltaMove !== delta) {
-        let x =  this.deltaMove - delta
-        this.deltaMove = delta
-        this.resizePortion('project', this.state.project + x)
-      }
+    let delta = this.getDelta(value)
+
+    if (value > min && value < max)
+      this.resizePortion('panel', this.state.panel + delta)
+    else
+      this.resizePortion('project', this.state.project + delta)
+
+    this.drag.prev = value
+  }
+
+  handleProjectDragStart = () => {
+    this.drag = {
+      prev: this.state.panel + this.state.item,
+      startItem: this.state.item
+    }
+  }
+
+  handlePanelDragStart = () => {
+    this.drag = {
+      prev: this.state.panel,
     }
   }
 
@@ -181,34 +188,14 @@ class ProjectLayout extends React.Component {
   }
 
   handleProjectDragStop = () => {
-    this.drag = null
+    this.drag = {}
     this.props.onUiUpdate({
       display: { proportion: this.state.proportion }
     })
   }
 
-  handleProjectDragStart = () => {
-    this.drag = {
-      deltaMove: 0,
-      startProject: this.state.project,
-      startItem: this.state.item
-    }
-  }
-
-  handlePanelDragStart = (event, active) => {
-    this.deltaMove = 0
-    this.dragAction = null
-    this.prevDrag = null
-    this.direction = null
-    this.panelDrag = {
-      min: active.props.min,
-      max: active.props.max,
-      orig: this.state.project
-    }
-  }
-
   handlePanelDragStop = () => {
-    this.deltaMove = 0
+    this.drag = {}
     this.props.onUiUpdate({
       panel: { width: this.state.panel },
       display: { proportion: this.state.proportion }
