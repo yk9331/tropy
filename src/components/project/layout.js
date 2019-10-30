@@ -7,7 +7,6 @@ const { restrict } = require('../../common/util')
 const { SASS: { BREAKPOINT, GIANT, PANEL } } = require('../../constants')
 const { ProjectView } = require('./view')
 const { ItemView } = require('../item')
-const { viewport } = require('../../dom')
 const cx = require('classnames')
 const { Resizable } = require('../resizable')
 const actions = require('../../actions')
@@ -25,20 +24,15 @@ class ProjectLayout extends React.Component {
     super(props)
     const { sidebar, panel, display } = this.props.ui
     let proportion = display.proportion || GIANT.DEFAULT_PROPORTION
-    let tandemWidth = viewport().width - sidebar.width - panel.width
-    let project = Math.ceil(tandemWidth * proportion)
-    let item = Math.floor(tandemWidth * (1 - proportion))
 
     this.state = {
       offset: panel.width,
       sidebar: sidebar.width,
-      project,
+      project: 0,
       panel: panel.width,
-      item,
-      itemMax: 0,
-      itemMin: 0,
+      item: 0,
       proportion,
-      displayType: viewport().width >= BREAKPOINT.XL ? 'giant' : 'standard',
+      displayType: 'standard',
     }
   }
 
