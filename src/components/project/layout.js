@@ -69,6 +69,10 @@ class ProjectLayout extends React.Component {
     }
   }
 
+  handleResize = throttle((width) => {
+    this.resizeAll(width)
+  }, 50)
+
   calcProportion = (project, item) => {
     let tandem = project + item
     return round((tandem - item) / tandem, GIANT.DEC_PRECISION)
@@ -76,11 +80,11 @@ class ProjectLayout extends React.Component {
 
   isProportionOk = (p) => p >= GIANT.MIN_PROPORTION && p <= GIANT.MAX_PROPORTION
 
-  handleResize = throttle((width) => {
-    this.resize(width)
-  }, 50)
+  getDelta = (value) => {
+    return (this.drag.prev !== value) ? value - this.drag.prev : 0
+  }
 
-  resize = (totalWidth) => {
+  resizeAll = (totalWidth) => {
     const { ui } = this.props
     if (this.props.isGiantViewEnabled && totalWidth >= BREAKPOINT.XL) {
       let tandemWidth = totalWidth - ui.sidebar.width - ui.panel.width
@@ -106,14 +110,12 @@ class ProjectLayout extends React.Component {
 
     }
     let delta = this.state[portion] - value
-    let counter = counterP[portion]
-    if (explicit) {
-      counter = explicit
+    let counter = (explicit) ? explicit : counterP[portion]
+    let newState = {
+      ...this.state,
+      [portion]: value,
+      [counter]: this.state[counter] + delta
     }
-
-    let newState = { ...this.state }
-    newState[portion] = value,
-    newState[counter] = this.state[counter] + delta
 
     if (portion === 'panel') {
       newState.offset = value
@@ -127,12 +129,6 @@ class ProjectLayout extends React.Component {
 
   handleSidebarOnResize = ({ value }) => {
     this.resizePortion('sidebar', value)
-  }
-
-  getDelta = (value) => {
-    if (this.drag.prev !== value)
-      return value - this.drag.prev
-    return 0
   }
 
   handleProjectOnResize = ({ value }) => {
@@ -298,9 +294,6 @@ class ProjectLayout extends React.Component {
     onMetadataSave: func.isRequired
   }
 }
-
-
-
 
 module.exports = {
   ProjectLayout: connect(
