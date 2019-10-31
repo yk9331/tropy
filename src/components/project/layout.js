@@ -82,6 +82,26 @@ class ProjectLayout extends React.Component {
 
   getDelta = (value) => {
     return (this.drag.prev !== value) ? value - this.drag.prev : 0
+
+  getChange = (value, isMax, isMin) => {
+    var action
+    let delta = (this.drag.prev !== value) ? value - this.drag.prev : 0
+    if (delta > 0) {
+      action = (isMax) ? 'PULL' : 'GROW'
+      if (action !== this.drag.action) {
+        this.drag.action = action
+        console.log('change to', action)
+      }
+    }
+    if (delta < 0) {
+      action = (isMin) ? 'PUSH' : 'SHRINK'
+      if (action !== this.drag.action) {
+        this.drag.action = action
+        console.log('change to', action)
+      }
+    }
+
+    return { delta, action }
   }
 
   resizeAll = (totalWidth) => {
@@ -144,17 +164,20 @@ class ProjectLayout extends React.Component {
     this.drag.prev = value
   }
 
-  handlePanelResize = ({ value }) => {
+  handlePanelResize = ({ value, unrestrictedValue }) => {
     const max = PANEL.MAX_WIDTH
     const min = PANEL.MIN_WIDTH
-    let delta = this.getDelta(value)
+    let isMax = this.state.panel === max
+    let isMin = this.state.panel === min
+    let { action, delta } = this.getChange(unrestrictedValue, isMax, isMin)
 
-    if (value > min && value < max)
-      this.resizePortion('panel', this.state.panel + delta)
-    else
+    if (action === 'GROW' || action === 'SHRINK') {
+      this.resizePortion('panel', restrict(this.state.panel + delta, min, max))
+    }
+    if (action === 'PULL' || action === 'PUSH') {
       this.resizePortion('project', this.state.project + delta)
-
-    this.drag.prev = value
+    }
+    this.drag.prev = unrestrictedValue
   }
 
   handleProjectDragStart = () => {
@@ -166,6 +189,7 @@ class ProjectLayout extends React.Component {
 
   handlePanelDragStart = () => {
     this.drag = {
+      action: '',
       prev: this.state.panel,
     }
   }
