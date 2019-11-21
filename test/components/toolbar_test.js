@@ -1,13 +1,12 @@
 'use strict'
 
 const React = require('react')
-const { shallow } = require('enzyme')
+const { render } = require('@testing-library/react')
+const { Toolbar } = __require('components/toolbar')
 
-describe.skip('Toolbar', () => {
-  const { Toolbar } = __require('components/toolbar')
-
+describe('Toolbar', () => {
   it('has class toolbar', () => {
-    expect(shallow(<Toolbar/>)).to.have.className('toolbar')
+    const { container } = render(<Toolbar/>)
+    expect(container.firstChild).to.have.class('toolbar')
   })
-
 })

@@ -1,27 +1,31 @@
 'use strict'
 
 const React = require('react')
-const { shallow } = require('enzyme')
+const { render } = require('@testing-library/react')
+const { ItemTableHead } = __require('components/item/table-head')
 
-describe.skip('ItemTableHead', () => {
-  const { ItemTableHead } = __require('components/item/table-head')
-
+describe('ItemTableHead', () => {
   it('has class table-head', () => {
-    expect(shallow(<ItemTableHead columns={[]}/>))
-      .to.have.className('table-head')
+    const { container } = render(<ItemTableHead columns={[]}/>)
+    expect(container.firstChild).to.have.class('table-head')
   })
 
   it('renders head columns', () => {
     const columns = [
-      { width: '40%', property: { id: 'x', type: 'string' } },
-      { width: '60%', property: { id: 'y', type: 'number' } }
+      { id: 'x', type: 'string', name: 'dummy'  },
+      { id: 'y', type: 'number', name: 'foo'  }
     ]
-
+    const colwidth = []
     const sort = {
       column: 'y', asc: true, type: 'property'
     }
 
-    expect(shallow(<ItemTableHead columns={columns} sort={sort}/>))
-      .to.have.exactly(2).descendants('ItemTableHeadCell')
+    const { getByText, container } = render(<ItemTableHead
+      colwidth={colwidth}
+      columns={columns}
+      sort={sort}/>)
+    expect(container.firstChild).to.contain('.metadata-head').and.length(2)
+    expect(getByText('Dummy')).to.have.class('label')
+    expect(getByText('Foo')).to.have.class('label')
   })
 })
