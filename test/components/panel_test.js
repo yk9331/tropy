@@ -1,12 +1,12 @@
 'use strict'
 
 const React = require('react')
-const { shallow } = require('enzyme')
+const { render } = require('@testing-library/react')
+const { PanelGroup } = __require('components/panel')
 
-describe.skip('PanelGroup', () => {
-  const { PanelGroup } = __require('components/panel')
-
+describe('PanelGroup', () => {
   it('has class panel-group', () => {
-    expect(shallow(<PanelGroup slots={[]}/>)).to.have.className('panel-group')
+    const { container } = render(<PanelGroup slots={[]}/>)
+    expect(container.firstChild).to.have.class('panel-group')
   })
 })
